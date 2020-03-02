@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_prices"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Prices" />
+        <item
+            android:id="@+id/nav_classes"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Classes" />
+        <item
+            android:id="@+id/nav_teacher"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Teacher" />
+        <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Calendar" />
+        <item
+            android:id="@+id/nav_workshops"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Workshops" />
+        <item
+            android:id="@+id/nav_resources"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Resources" />
+        <item
+            android:id="@+id/nav_contact"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Contact" />
+    </group>
+
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Profile" />
+        </menu>
+    </item>
+</menu>
