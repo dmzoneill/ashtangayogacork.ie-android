@@ -49,9 +49,6 @@ public class Login extends AppCompatActivity implements AsyncResponse {
         Button clickButton = (Button) findViewById(R.id.login_button);
 
         clickButton.setOnClickListener(new View.OnClickListener() {
-
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
             public void onClick(View v) {
                 LoginManager task = new LoginManager();
                 stage = 1;

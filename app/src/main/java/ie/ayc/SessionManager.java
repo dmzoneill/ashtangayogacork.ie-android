@@ -2,7 +2,6 @@ package ie.ayc;
 
 import android.os.AsyncTask;
 import android.os.Build;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
@@ -10,19 +9,10 @@ import androidx.annotation.RequiresApi;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
-import ie.ayc.ui.Session;
 
 public class SessionManager extends AsyncTask<String, String, String> {
 
@@ -51,13 +41,13 @@ public class SessionManager extends AsyncTask<String, String, String> {
     protected String doInBackground(String... params) {
         String urlString = params[0]; // URL to call
 
+        AycCookieManager ayccm = AycCookieManager.getInstance();
+
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-            for (String cookie : Session.getCookies()) {
-                urlConnection.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
-            }
+            urlConnection.addRequestProperty("Cookie", ayccm.getCookieValue());
 
             urlConnection.setDoOutput(true);
             urlConnection.setInstanceFollowRedirects(true);
@@ -66,7 +56,7 @@ public class SessionManager extends AsyncTask<String, String, String> {
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty("charset", "utf-8");
 
-            Session.setCookies(urlConnection.getHeaderFields().get("Set-Cookie"));
+            ayccm.addCookies(urlConnection.getHeaderFields().get("Set-Cookie"));
 
             int responseCode = urlConnection.getResponseCode();
 

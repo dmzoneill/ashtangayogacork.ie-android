@@ -12,11 +12,8 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import ie.ayc.ui.Session;
 
 public class LoginManager extends AsyncTask<String, String, String> {
 
@@ -47,6 +44,8 @@ public class LoginManager extends AsyncTask<String, String, String> {
         String urlString = params[0]; // URL to call
         String data = params[1]; //data to post
 
+        AycCookieManager ayccm = AycCookieManager.getInstance();
+
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -57,9 +56,7 @@ public class LoginManager extends AsyncTask<String, String, String> {
             urlConnection.setConnectTimeout(4000);
             urlConnection.setRequestMethod("POST");
 
-            for (String cookie : Session.getCookies()) {
-                urlConnection.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
-            }
+            urlConnection.addRequestProperty("Cookie", ayccm.getCookieValue());
 
             urlConnection.setRequestProperty("Host", "ashtangayoga.ie");
             urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -79,7 +76,7 @@ public class LoginManager extends AsyncTask<String, String, String> {
 
             Log.v("ayc-login", " post data: " + data);
 
-            Session.setCookies(urlConnection.getHeaderFields().get("Set-Cookie"));
+            ayccm.addCookies(urlConnection.getHeaderFields().get("Set-Cookie"));
 
             // handle error response code it occurs
             int responseCode = urlConnection.getResponseCode();

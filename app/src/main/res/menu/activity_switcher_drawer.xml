@@ -6,35 +6,35 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_stat_home"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_prices"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_stat_euro"
             android:title="Prices" />
         <item
             android:id="@+id/nav_classes"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_stat_book"
             android:title="Classes" />
         <item
             android:id="@+id/nav_teacher"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_stat_person"
             android:title="Teacher" />
         <item
             android:id="@+id/nav_calendar"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_stat_schedule"
             android:title="Calendar" />
         <item
             android:id="@+id/nav_workshops"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_stat_workshop"
             android:title="Workshops" />
         <item
             android:id="@+id/nav_resources"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_stat_info"
             android:title="Resources" />
         <item
             android:id="@+id/nav_contact"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_stat_message"
             android:title="Contact" />
     </group>
 
@@ -42,8 +42,12 @@
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_stat_settings"
                 android:title="Profile" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@android:drawable/ic_menu_close_clear_cancel"
+                android:title="Logout" />
         </menu>
     </item>
 </menu>

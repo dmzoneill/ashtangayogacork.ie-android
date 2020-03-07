@@ -42,8 +42,8 @@
             android:layout_marginBottom="20dp"
             android:padding="10dp"
             android:background="@drawable/login_input"
-            android:layout_width="600px"
-            android:layout_height="100px"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
             android:text="Name" />
 
         <TextView
@@ -55,8 +55,8 @@
 
         <EditText
             android:id="@+id/edittext_password"
-            android:layout_width="600px"
-            android:layout_height="100px"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
             android:ems="10"
             android:padding="10dp"
             android:layout_marginBottom="40dp"
