@@ -1,4 +1,4 @@
-package ie.ayc.ui.gallery;
+package ie.ayc.ui.prices;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import ie.ayc.R;
 
-public class GalleryFragment extends Fragment {
+public class PricesFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private PricesViewModel pricesViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                ViewModelProviders.of(this).get(GalleryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        pricesViewModel =
+                ViewModelProviders.of(this).get(PricesViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_prices, container, false);
+        final TextView textView = root.findViewById(R.id.nav_prices);
+        pricesViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

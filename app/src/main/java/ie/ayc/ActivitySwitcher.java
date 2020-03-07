@@ -31,20 +31,13 @@ public class ActivitySwitcher extends AppCompatActivity implements NavigationVie
         setContentView(R.layout.activity_switcher);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_prices)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -57,7 +50,6 @@ public class ActivitySwitcher extends AppCompatActivity implements NavigationVie
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_switcher, menu);
-        MenuItem item = menu.findItem(R.id.nav_logout);
         return true;
     }
 
@@ -95,6 +87,11 @@ public class ActivitySwitcher extends AppCompatActivity implements NavigationVie
                 ActivitySwitcher.this.finish();
                 break;
             }
+
+            //case R.id.nav_prices: {
+            //    NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+            //    navController.navigate(R.id.nav_prices_fragment);
+            //}
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

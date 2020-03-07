@@ -3,22 +3,52 @@ package ie.ayc;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class LoginManager extends AsyncTask<String, String, String> {
+public class ScraperManager extends AsyncTask<String, String, String> implements AsyncResponse {
 
+    private static ScraperManager instance;
+    private final AsyncResponse this_async;
     public AsyncResponse delegate = null;
+    private static JSONObject classes;
+    private static JSONObject prices;
+    private static JSONObject bookings;
+    private static JSONObject transactions;
+    private static JSONObject used_credit;
+    private static JSONObject expiring_credit;
 
-    public LoginManager(){
+    private ScraperManager() {
         //set context variables if required
+        this.this_async = this;
+        this.delegate = this;
+    }
+
+    public static ScraperManager getInstance(){
+        if(instance == null){
+            instance = new ScraperManager();
+        }
+        return instance;
+    }
+
+    public void fetch_all() {
+        ScraperManager task1 = new ScraperManager();
+        task1.delegate = this.this_async;
+        task1.execute("https://ashtangayoga.ie/json/?a=get_bookings");
+
+        ScraperManager task2 = new ScraperManager();
+        task2.delegate = this.this_async;
+        task2.execute("https://ashtangayoga.ie/json/?a=get_classes");
+
+        ScraperManager task3 = new ScraperManager();
+        task3.delegate = this.this_async;
+        task3.execute("https://ashtangayoga.ie/json/?a=get_prices");
     }
 
     @Override
@@ -38,7 +68,6 @@ public class LoginManager extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... params) {
         String urlString = params[0]; // URL to call
-        String data = params[1]; //data to post
 
         AycCookieManager ayccm = AycCookieManager.getInstance();
 
@@ -50,7 +79,7 @@ public class LoginManager extends AsyncTask<String, String, String> {
             urlConnection.setDoOutput(true);
             urlConnection.setInstanceFollowRedirects(false);
             urlConnection.setConnectTimeout(4000);
-            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestMethod("GET");
 
             urlConnection.addRequestProperty("Cookie", ayccm.getCookieValue());
 
@@ -59,25 +88,15 @@ public class LoginManager extends AsyncTask<String, String, String> {
             urlConnection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             urlConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
             urlConnection.setRequestProperty("Connection", "keep-alive");
-            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.addRequestProperty("REFERER", "https://ashtangayoga.ie/wp-login.php");
             urlConnection.setRequestProperty("charset", "utf-8");
-            urlConnection.setRequestProperty("Content-Length", Integer.toString(data.length()));
-
-            // Send post request
-            DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
-            wr.writeBytes(data);
-            wr.flush();
-            wr.close();
-
-            Log.v("ayc-login", " post data: " + data);
 
             ayccm.addCookies(urlConnection.getHeaderFields().get("Set-Cookie"));
 
             // handle error response code it occurs
             int responseCode = urlConnection.getResponseCode();
             InputStream inputStream;
-            Log.v("ayc-login", " response code: " + responseCode);
+            Log.v("ayc-scraper", " response code: " + responseCode);
             if (200 <= responseCode && responseCode <= 299) {
                 inputStream = urlConnection.getInputStream();
             } else {
@@ -96,24 +115,39 @@ public class LoginManager extends AsyncTask<String, String, String> {
             String resp = response.toString();
 
             int maxLogSize = 1000;
-            for(int i = 0; i <= resp.length() / maxLogSize; i++) {
+            for (int i = 0; i <= resp.length() / maxLogSize; i++) {
                 int start = i * maxLogSize;
-                int end = (i+1) * maxLogSize;
+                int end = (i + 1) * maxLogSize;
                 end = end > resp.length() ? resp.length() : end;
-                Log.v("ayc-resp", resp.substring(start,end));
+                Log.v("ayc-scraper-resp", resp.substring(start, end));
             }
 
-            if(resp.contains("<strong>ERROR</strong>: Incorrect username or password")){
-                Log.v("ayc-login", " Failed to log in");
-                return "{\"loggedin\":false}";
-            }
-
-            Log.v("ayc-login", " logged in");
-            return "{\"loggedin\":true}";
+            return resp;
         } catch (Exception e) {
-            Log.v("ayc-async",e.getMessage());
+            Log.v("ayc-scraper", e.getMessage());
         }
 
-        return "{\"loggedin\":false}";
+        return "";
+    }
+
+    @Override
+    public void processFinish(String output) throws JSONException {
+        Log.v("ayc-scraper", output);
+        try {
+            JSONObject reader = new JSONObject(output);
+            switch (reader.getString("action")) {
+                case "get_bookings":
+                    bookings = reader;
+                    break;
+                case "get_prices":
+                    prices = reader;
+                    break;
+                case "get_classes":
+                    classes = reader;
+                    break;
+            }
+        } catch (Exception e) {
+            Log.v("ayc-error", e.getStackTrace().toString());
+        }
     }
 }

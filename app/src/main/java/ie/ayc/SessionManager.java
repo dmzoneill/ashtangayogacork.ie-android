@@ -1,11 +1,7 @@
 package ie.ayc;
 
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -36,7 +32,6 @@ public class SessionManager extends AsyncTask<String, String, String> {
         super.onPreExecute();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected String doInBackground(String... params) {
         String urlString = params[0]; // URL to call
