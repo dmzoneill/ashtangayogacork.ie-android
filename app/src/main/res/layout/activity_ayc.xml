@@ -9,7 +9,7 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar_activity_switcher"
+        layout="@layout/app_bar_ayc"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_activity_switcher"
-        app:menu="@menu/activity_switcher_drawer" />
+        app:headerLayout="@layout/nav_header_ayc"
+        app:menu="@menu/activity_ayc_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

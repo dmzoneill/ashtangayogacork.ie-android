@@ -3,6 +3,7 @@ package ie.ayc;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +19,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     private final AsyncResponse this_async;
     public AsyncResponse delegate = null;
     private static JSONObject classes;
-    private static JSONObject prices;
+    private static JSONArray prices;
     private static JSONObject bookings;
     private static JSONObject transactions;
     private static JSONObject used_credit;
@@ -28,6 +29,50 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         //set context variables if required
         this.this_async = this;
         this.delegate = this;
+    }
+
+    public static JSONObject getClasses(){
+        return classes;
+    }
+
+    public static JSONArray getPrices(int filter) {
+        JSONArray filtered = new JSONArray();
+
+        Log.v("ayc-scraper", " total prices: " + prices.length());
+
+        try {
+            for (int y = 0; y < prices.length(); y++) {
+                JSONObject jo = prices.getJSONObject(y);
+
+                Log.v("ayc-scraper", " prices filter " + String.valueOf(y) + " / " + prices.length());
+                switch (filter) {
+                    case 0:
+                        Log.v("ayc-scraper", " prices filter monthly: " + jo.get("monthly").toString());
+                        if(jo.get("monthly").toString().compareToIgnoreCase("1") == 0){
+                            filtered.put(jo);
+                        }
+                        break;
+                    case 1:
+                        Log.v("ayc-scraper", " prices filter special: " + jo.get("class_type_restriction").toString());
+                        if(jo.get("class_type_restriction").toString().compareToIgnoreCase("null") != 0){
+                            filtered.put(jo);
+                        }
+                        break;
+                    case 2:
+                    default:
+                        Log.v("ayc-scraper", " prices filter standard: " + jo.get("monthly").toString());
+                        if(jo.get("monthly").toString().compareToIgnoreCase("0") == 0){
+                            filtered.put(jo);
+                        }
+                        break;
+                }
+            }
+        }
+        catch (Exception e){
+            Log.v("ayc-scraper", " prices filter error: " + e.getMessage());
+        }
+
+        return filtered;
     }
 
     public static ScraperManager getInstance(){
@@ -140,7 +185,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
                     bookings = reader;
                     break;
                 case "get_prices":
-                    prices = reader;
+                    prices = reader.getJSONArray("result");
                     break;
                 case "get_classes":
                     classes = reader;

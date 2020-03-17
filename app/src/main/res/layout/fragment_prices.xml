@@ -1,22 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.prices.PricesFragment">
 
-    <TextView
-        android:id="@+id/text_prices"
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:background="#FFFFFF"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/linear1"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/yoga_for_everyone"
+                android:text="Yoga for everyone"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:text="You won't find our level of service any where else in Cork! Our prices are competitve for the level of student-teacher interaction you will receive."
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:text="In our classes, the teacher will get to know you personaly and work with you to develop your own practice."
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:text="We use paypal for all transactions. You do not require a paypal account to use paypal and our services. Paypal accepts all major credits cards and debit cards while providing you with ease, assurement and security."
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:text="You can also call or email us for more information. Refer to the classes pages for bookings."
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+            <TextView
+                android:id="@+id/gifts"
+                android:text="Vouchers/Gifts"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:text="All purchase options below can be gifted to an individual or a loved one.  Purchase as normal and then visit the profile page and gift the transaction."
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+            <TextView
+                android:id="@+id/monthlies"
+                android:text="Monthlies"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/monthlies_table"
+                android:orientation="vertical"
+                android:layout_marginRight="6dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+            <TextView
+                android:id="@+id/specials"
+                android:text="Specials and Workshops"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/specials_table"
+                android:orientation="vertical"
+                android:layout_marginRight="6dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+            <TextView
+                android:id="@+id/standard"
+                android:text="Standard Class Credit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/standard_table"
+                android:orientation="vertical"
+                android:layout_marginRight="6dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

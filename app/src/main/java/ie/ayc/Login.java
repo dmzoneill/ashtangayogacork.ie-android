@@ -77,7 +77,7 @@ public class Login extends AppCompatActivity implements AsyncResponse {
         ScraperManager mgr = ScraperManager.getInstance();
         mgr.fetch_all();
 
-        Intent myIntent = new Intent(Login.this, ActivitySwitcher.class);
+        Intent myIntent = new Intent(Login.this, AycActivity.class);
         //myIntent.putExtra("key", value); //Optional parameters
         Login.this.startActivity(myIntent);
     }
