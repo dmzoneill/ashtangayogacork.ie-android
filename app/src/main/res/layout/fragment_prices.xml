@@ -95,14 +95,33 @@
                 android:fontFamily="sans-serif"
                 android:textSize="20sp"/>
 
+            <TextView
+                android:text="1 credit = 1 class"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"/>
+
             <LinearLayout
                 android:id="@+id/monthlies_table"
                 android:orientation="vertical"
                 android:layout_marginRight="6dp"
+                android:layout_marginBottom="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
             </LinearLayout>
+
+            <TextView
+                android:text="¹ Multiple monthlies can be bought and can be activated at a later stage"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:text="² Some monthlies are limited in the amount of times you can purchase it"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"/>
 
             <ImageView
                 android:layout_width="69dp"
@@ -119,6 +138,12 @@
                 android:textStyle="bold"
                 android:fontFamily="sans-serif"
                 android:textSize="20sp"/>
+
+            <TextView
+                android:text="1 credit = 1 class"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"/>
 
             <LinearLayout
                 android:id="@+id/specials_table"
@@ -143,6 +168,18 @@
                 android:textStyle="bold"
                 android:fontFamily="sans-serif"
                 android:textSize="20sp"/>
+
+            <TextView
+                android:text="1 credit = 1 class"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:text="Valid from date of purchase"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"/>
 
             <LinearLayout
                 android:id="@+id/standard_table"
