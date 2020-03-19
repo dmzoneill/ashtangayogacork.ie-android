@@ -121,7 +121,8 @@
                 android:text="² Some monthlies are limited in the amount of times you can purchase it"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"/>
+                android:textSize="10sp"
+                android:layout_marginBottom="20dp"/>
 
             <ImageView
                 android:layout_width="69dp"

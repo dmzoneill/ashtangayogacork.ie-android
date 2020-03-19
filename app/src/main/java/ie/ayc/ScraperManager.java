@@ -38,9 +38,9 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     public static JSONArray getPrices(int filter) {
         JSONArray filtered = new JSONArray();
 
-        Log.v("ayc-scraper", " total prices: " + prices.length());
-
         try {
+            Log.v("ayc-scraper", " total prices: " + prices.length());
+
             for (int y = 0; y < prices.length(); y++) {
                 JSONObject jo = prices.getJSONObject(y);
 

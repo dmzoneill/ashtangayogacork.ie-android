@@ -29,11 +29,15 @@ public class AycCookieManager {
         this.loadCookies();
     }
 
+    private CookieManager getCookieManager() {
+        return this.mCookieManager;
+    }
+
     public static AycCookieManager getInstance() {
-        if (AycCookieManager.instance == null) {
-            AycCookieManager.instance = new AycCookieManager();
+        if (instance == null) {
+            instance = new AycCookieManager();
         }
-        return AycCookieManager.instance;
+        return instance;
     }
 
     public static String encodeValue(String value) {
