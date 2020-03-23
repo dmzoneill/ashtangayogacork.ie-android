@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 public class LoginManager extends AsyncTask<String, String, String> {
 
@@ -111,7 +112,7 @@ public class LoginManager extends AsyncTask<String, String, String> {
             Log.v("ayc-login", " logged in");
             return "{\"loggedin\":true}";
         } catch (Exception e) {
-            Log.v("ayc-async",e.getMessage());
+            Log.v("ayc-async", e.getMessage());
         }
 
         return "{\"loggedin\":false}";

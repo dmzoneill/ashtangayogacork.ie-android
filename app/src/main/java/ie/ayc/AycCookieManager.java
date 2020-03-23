@@ -142,6 +142,7 @@ public class AycCookieManager {
 
         if (!isCookieManagerEmpty()) {
             for (HttpCookie eachCookie : getCookies()) {
+                Log.v("ayc-coookie-manager",String.format("%s=%s; ", eachCookie.getName(), eachCookie.getValue()));
                 cookieValue = cookieValue + String.format("%s=%s; ", eachCookie.getName(), eachCookie.getValue());
             }
         }

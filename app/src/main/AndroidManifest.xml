@@ -11,11 +11,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PurchaseActivity"></activity>
         <activity
-            android:name=".AycActivity"
-            android:label="@string/title_activity_ayc"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".AycNavigationActivity"
+            android:label="@string/title_activity_ayc_navigation"></activity>
+        <activity android:name=".PurchaseActivity" />
         <activity android:name=".Register" />
         <activity android:name=".Login">
             <intent-filter>

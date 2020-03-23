@@ -3,14 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.prices.PricesFragment">
+    android:background="@drawable/background_feet"
+    tools:context=".ui.PricesFragment">
 
     <ScrollView
         android:id="@+id/scrollView1"
         android:background="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:paddingBottom="?attr/actionBarSize">
 
         <LinearLayout
             android:id="@+id/linear1"

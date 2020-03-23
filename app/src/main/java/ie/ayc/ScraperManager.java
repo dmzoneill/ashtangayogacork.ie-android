@@ -12,13 +12,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
-public class ScraperManager extends AsyncTask<String, String, String> implements AsyncResponse {
+public class ScraperManager extends AsyncTask<String, String, String> implements AsyncResponse, Observable {
 
+    private static ArrayList<Observer> observers;
     private static ScraperManager instance;
     private final AsyncResponse this_async;
     public AsyncResponse delegate = null;
-    private static JSONObject classes;
+    private static String page_welcome;
+    private static JSONArray profile;
+    private static JSONArray classes;
     private static JSONArray prices;
     private static JSONObject bookings;
     private static JSONObject transactions;
@@ -27,12 +31,33 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
 
     private ScraperManager() {
         //set context variables if required
+        observers = new ArrayList<>();
+
         this.this_async = this;
         this.delegate = this;
     }
 
-    public static JSONObject getClasses(){
-        return classes;
+    public static JSONArray getClasses(int filter_sticky){
+        JSONArray filtered = new JSONArray();
+
+        try {
+            for (int y = 0; y < classes.length(); y++) {
+                JSONObject jo = classes.getJSONObject(y);
+
+                if(jo.get("sticky").toString().compareToIgnoreCase(String.valueOf(filter_sticky))==0){
+                    filtered.put(jo);
+                }
+            }
+        }
+        catch (Exception e){
+            Log.v("ayc-scraper", " classes filter error: " + e.getStackTrace());
+        }
+
+        return filtered;
+    }
+
+    public static JSONArray getProfile(){
+        return profile;
     }
 
     public static JSONArray getPrices(int filter) {
@@ -94,6 +119,14 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         ScraperManager task3 = new ScraperManager();
         task3.delegate = this.this_async;
         task3.execute("https://ashtangayoga.ie/json/?a=get_prices");
+
+        ScraperManager task4 = new ScraperManager();
+        task4.delegate = this.this_async;
+        task4.execute("https://ashtangayoga.ie/json/?a=get_profile");
+
+        ScraperManager task5 = new ScraperManager();
+        task5.delegate = this.this_async;
+        task5.execute("https://ashtangayoga.ie/json/?a=get_page&page=Welcome");
     }
 
     @Override
@@ -176,7 +209,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     }
 
     @Override
-    public void processFinish(String output) throws JSONException {
+    public void processFinish(String output) {
         Log.v("ayc-scraper", output);
         try {
             JSONObject reader = new JSONObject(output);
@@ -188,11 +221,54 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
                     prices = reader.getJSONArray("result");
                     break;
                 case "get_classes":
-                    classes = reader;
+                    classes = reader.getJSONArray("result");
+                    break;
+                case "get_profile":
+                    profile = reader.getJSONArray("result");
+                    this.object_notify(UpdateSource.profile);
+                    break;
+                case "get_page":
+                    JSONArray js = reader.getJSONArray("result");
+                    String pname = js.get(0).toString();
+                    switch(pname){
+                        case "Welcome":
+                            page_welcome = java.net.URLDecoder.decode(js.get(1).toString(),"UTF-8");
+                            break;
+                    }
+
                     break;
             }
+            this.notify_all();
         } catch (Exception e) {
             Log.v("ayc-error", e.getStackTrace().toString());
+        }
+    }
+
+    @Override
+    public void attach(Observer obj) {
+        if(observers.contains(obj)==false){
+            observers.add(obj);
+        }
+    }
+
+    @Override
+    public void detach(Observer obj) {
+        if(observers.contains(obj)){
+            observers.remove(obj);
+        }
+    }
+
+    @Override
+    public void object_notify(UpdateSource updatesource) {
+        for (Observer obj: observers) {
+            obj.update(updatesource);
+        }
+    }
+
+    @Override
+    public void notify_all() {
+        for (UpdateSource source : UpdateSource.values()) {
+            this.object_notify(source);
         }
     }
 }
