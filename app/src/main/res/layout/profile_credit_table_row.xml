@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/expiring_credit_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -41,4 +41,4 @@
         android:layout_height="wrap_content"
         android:textSize="11sp"/>
 
-</LinearLayout>
+</TableRow>

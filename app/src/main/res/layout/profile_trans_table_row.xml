@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/transaction_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="6dp"
-    android:layout_marginRight="6dp"
-    android:orientation="horizontal" >
+    android:layout_marginRight="6dp">
 
     <TextView
         android:text="0"
@@ -49,4 +48,4 @@
         android:textSize="11sp"/>
 
 
-</LinearLayout>
+</TableRow>

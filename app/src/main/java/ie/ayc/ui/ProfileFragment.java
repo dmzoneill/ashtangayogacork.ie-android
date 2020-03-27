@@ -11,9 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -107,6 +108,7 @@ public class ProfileFragment extends Fragment implements Observer {
     private void updateBookings() {
         try {
             JSONArray bookings = ScraperManager.getBookings();
+            Log.v("ayc-profile","bookings-length: " + bookings.length());
 
             LinearLayout ll = this.root.findViewById(R.id.profile_bookings_ll);
             ll.removeAllViews();
@@ -139,8 +141,9 @@ public class ProfileFragment extends Fragment implements Observer {
         try {
             JSONArray expired = ScraperManager.getExpiringCredit();
             JSONObject simplified = expired.getJSONObject(1);
+            Log.v("ayc-profile","expired-length: " + expired.length());
 
-            LinearLayout ll = this.root.findViewById(R.id.profile_expiring_credit_ll);
+            TableLayout ll = this.root.findViewById(R.id.profile_expiring_credit_ll);
             ll.removeAllViews();
 
             for (Iterator<String> it = simplified.keys(); it.hasNext(); ) {
@@ -149,7 +152,7 @@ public class ProfileFragment extends Fragment implements Observer {
                 JSONArray details = simplified.getJSONArray(key);
 
                 LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LinearLayout expire_row = (LinearLayout) wvi.inflate(R.layout.profile_credit_table_row, null);
+                TableRow expire_row = (TableRow) wvi.inflate(R.layout.profile_credit_table_row, null);
 
                 TextView tvamount = (TextView) expire_row.getChildAt(0);
                 TextView tvpd = (TextView) expire_row.getChildAt(1);
@@ -173,10 +176,11 @@ public class ProfileFragment extends Fragment implements Observer {
 
     private void updateUsedCredit() {
         try {
-            JSONArray expired = ScraperManager.getUsedCredit();
-            JSONObject simplified = expired.getJSONObject(1);
+            JSONArray used = ScraperManager.getUsedCredit();
+            JSONObject simplified = used.getJSONObject(1);
+            Log.v("ayc-profile","expired-length: " + used.length());
 
-            LinearLayout ll = this.root.findViewById(R.id.profile_used_credit_ll);
+            TableLayout ll = this.root.findViewById(R.id.profile_used_credit_ll);
             ll.removeAllViews();
 
             for (Iterator<String> it = simplified.keys(); it.hasNext(); ) {
@@ -185,7 +189,7 @@ public class ProfileFragment extends Fragment implements Observer {
                 JSONArray details = simplified.getJSONArray(key);
 
                 LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LinearLayout used_row = (LinearLayout) wvi.inflate(R.layout.profile_credit_table_row, null);
+                TableRow used_row = (TableRow) wvi.inflate(R.layout.profile_credit_table_row, null);
 
                 TextView tvamount = (TextView) used_row.getChildAt(0);
                 TextView tvpd = (TextView) used_row.getChildAt(1);
@@ -210,15 +214,16 @@ public class ProfileFragment extends Fragment implements Observer {
     private void updateTransactions() {
         try {
             JSONArray transactions = ScraperManager.getTransactions();
+            Log.v("ayc-profile","transactions-length: " + transactions.length());
 
-            LinearLayout ll = this.root.findViewById(R.id.profile_transactions_ll);
+            TableLayout ll = this.root.findViewById(R.id.profile_transactions_ll);
             ll.removeAllViews();
 
             for(int t=0; t< transactions.length(); t++) {
                 JSONObject obj = transactions.getJSONObject(t);
 
                 LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LinearLayout trans_row = (LinearLayout) wvi.inflate(R.layout.profile_trans_table_row, null);
+                TableRow trans_row = (TableRow) wvi.inflate(R.layout.profile_trans_table_row, null);
 
                 TextView tvdate = (TextView) trans_row.getChildAt(0);
                 TextView tvtransid = (TextView) trans_row.getChildAt(1);
@@ -238,7 +243,7 @@ public class ProfileFragment extends Fragment implements Observer {
             }
         }
         catch(Exception e){
-            Log.v("ayc-classes", e.getMessage());
+            Log.v("ayc-profile", e.getMessage());
         }
     }
 

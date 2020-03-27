@@ -77,7 +77,7 @@
                 android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/profile_expiring_credit_ll"
                 android:orientation="vertical"
                 android:layout_marginRight="6dp"
@@ -86,7 +86,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
-            </LinearLayout>
+            </TableLayout>
 
             <ImageView
                 android:layout_width="69dp"
@@ -104,7 +104,7 @@
                 android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/profile_used_credit_ll"
                 android:orientation="vertical"
                 android:layout_marginRight="6dp"
@@ -113,7 +113,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
-            </LinearLayout>
+            </TableLayout>
 
             <ImageView
                 android:layout_width="69dp"
@@ -131,7 +131,7 @@
                 android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/profile_transactions_ll"
                 android:orientation="vertical"
                 android:layout_marginRight="6dp"
@@ -140,7 +140,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
-            </LinearLayout>
+            </TableLayout>
 
             <ImageView
                 android:layout_width="69dp"
