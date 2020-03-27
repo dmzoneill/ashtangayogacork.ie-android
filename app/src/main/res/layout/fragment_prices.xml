@@ -8,7 +8,6 @@
 
     <ScrollView
         android:id="@+id/scrollView1"
-        android:background="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -28,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
             <TextView
@@ -72,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
             <TextView
@@ -94,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
             <TextView
@@ -139,7 +138,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
             <TextView
@@ -169,7 +168,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
             <TextView

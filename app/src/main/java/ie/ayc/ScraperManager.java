@@ -24,10 +24,10 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     private static JSONArray profile;
     private static JSONArray classes;
     private static JSONArray prices;
-    private static JSONObject bookings;
-    private static JSONObject transactions;
-    private static JSONObject used_credit;
-    private static JSONObject expiring_credit;
+    private static JSONArray bookings;
+    private static JSONArray transactions;
+    private static JSONArray used_credit;
+    private static JSONArray expiring_credit;
 
     private ScraperManager() {
         //set context variables if required
@@ -58,6 +58,22 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
 
     public static JSONArray getProfile(){
         return profile;
+    }
+
+    public static JSONArray getBookings(){
+        return bookings;
+    }
+
+    public static JSONArray getExpiringCredit(){
+        return expiring_credit;
+    }
+
+    public static JSONArray getUsedCredit(){
+        return used_credit;
+    }
+
+    public static JSONArray getTransactions(){
+        return transactions;
     }
 
     public static JSONArray getPrices(int filter) {
@@ -108,6 +124,11 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     }
 
     public void fetch_all() {
+
+        ScraperManager task0 = new ScraperManager();
+        task0.delegate = this.this_async;
+        task0.execute("https://ashtangayoga.ie/json/?a=get_transactions");
+
         ScraperManager task1 = new ScraperManager();
         task1.delegate = this.this_async;
         task1.execute("https://ashtangayoga.ie/json/?a=get_bookings");
@@ -126,7 +147,13 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
 
         ScraperManager task5 = new ScraperManager();
         task5.delegate = this.this_async;
-        task5.execute("https://ashtangayoga.ie/json/?a=get_page&page=Welcome");
+        task5.execute("https://ashtangayoga.ie/json/?a=get_used_credit");
+
+        ScraperManager task6 = new ScraperManager();
+        task6.delegate = this.this_async;
+        task6.execute("https://ashtangayoga.ie/json/?a=get_expiring_credit");
+
+
     }
 
     @Override
@@ -215,16 +242,31 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
             JSONObject reader = new JSONObject(output);
             switch (reader.getString("action")) {
                 case "get_bookings":
-                    bookings = reader;
+                    bookings = reader.getJSONArray("result");
+                    this.object_notify(UpdateSource.classes);
                     break;
                 case "get_prices":
                     prices = reader.getJSONArray("result");
+                    this.object_notify(UpdateSource.prices);
                     break;
                 case "get_classes":
                     classes = reader.getJSONArray("result");
+                    this.object_notify(UpdateSource.classes);
                     break;
                 case "get_profile":
                     profile = reader.getJSONArray("result");
+                    this.object_notify(UpdateSource.profile);
+                    break;
+                case "get_transactions":
+                    transactions = reader.getJSONArray("result");
+                    this.object_notify(UpdateSource.profile);
+                    break;
+                case "get_used_credit":
+                    used_credit = reader.getJSONArray("result");
+                    this.object_notify(UpdateSource.profile);
+                    break;
+                case "get_expiring_credit":
+                    expiring_credit = reader.getJSONArray("result");
                     this.object_notify(UpdateSource.profile);
                     break;
                 case "get_page":

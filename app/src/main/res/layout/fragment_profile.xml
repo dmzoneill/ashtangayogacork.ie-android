@@ -7,12 +7,11 @@
     android:background="@drawable/background_feet"
     tools:context=".ui.ProfileFragment">
 
-
     <ScrollView
         android:id="@+id/scrollView1"
-        android:background="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="?attr/actionBarSize"
         android:fillViewport="true">
 
         <LinearLayout
@@ -20,15 +19,134 @@
             android:orientation="vertical"
             android:padding="20dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" >
 
             <ImageView
                 android:id="@+id/person"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="15dp"
+                android:src="@drawable/ic_profile_icon2" />
+
+            <TextView
+                android:id="@+id/username"
+                android:text="Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/my_bookings"
+                android:text="My bookings"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/profile_bookings_ll"
+                android:orientation="vertical"
+                android:layout_marginRight="6dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
                 android:layout_gravity="center"
                 android:src="@drawable/sticker_ganesh" />
 
+            <TextView
+                android:id="@+id/expiring_credit"
+                android:text="Expiring Credit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/profile_expiring_credit_ll"
+                android:orientation="vertical"
+                android:layout_marginRight="6dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+            <TextView
+                android:id="@+id/used_credit"
+                android:text="Used Credit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/profile_used_credit_ll"
+                android:orientation="vertical"
+                android:layout_marginRight="6dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+            <TextView
+                android:id="@+id/transaction_history"
+                android:text="Transaction History"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu"
+                android:textSize="20sp"/>
+
+            <LinearLayout
+                android:id="@+id/profile_transactions_ll"
+                android:orientation="vertical"
+                android:layout_marginRight="6dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
 
         </LinearLayout>
     </ScrollView>
