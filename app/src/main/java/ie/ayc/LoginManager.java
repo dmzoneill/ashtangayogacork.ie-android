@@ -41,6 +41,8 @@ public class LoginManager extends AsyncTask<String, String, String> {
         String urlString = params[0]; // URL to call
         String data = params[1]; //data to post
 
+        Log.v("ayc-login-url", urlString);
+
         AycCookieManager ayccm = AycCookieManager.getInstance();
 
         try {

@@ -26,7 +26,7 @@
             android:layout_width="180dp"
             android:layout_height="162dp"
             android:scaleType="fitXY"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="30dp"
             android:src="@drawable/login_logo" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:id="@+id/edittext_username"
             android:ems="10"
             android:inputType="textPersonName"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="15dp"
             android:padding="10dp"
             android:background="@drawable/login_input"
             android:layout_width="300dp"
@@ -60,7 +60,7 @@
             android:layout_height="50dp"
             android:ems="10"
             android:padding="10dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/login_input"
             android:inputType="textPassword" />
 
@@ -68,9 +68,46 @@
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/login_button"
             android:textColor="@android:color/white"
             android:text="Login" />
+
+        <ImageButton
+            android:id="@+id/login_button_facebook"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            android:layout_width="220dp"
+            android:layout_height="40dp"
+            android:background="@drawable/fb"/>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/register_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="|" />
+
+            <TextView
+                android:id="@+id/lost_password_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="lost password?" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

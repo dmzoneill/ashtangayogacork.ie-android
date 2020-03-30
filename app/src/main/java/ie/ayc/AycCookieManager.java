@@ -29,10 +29,6 @@ public class AycCookieManager {
         this.loadCookies();
     }
 
-    private CookieManager getCookieManager() {
-        return this.mCookieManager;
-    }
-
     public static AycCookieManager getInstance() {
         if (instance == null) {
             instance = new AycCookieManager();
@@ -76,6 +72,14 @@ public class AycCookieManager {
 
     public void addCookies(List<String> list) {
         try {
+            if (list == null) {
+                Log.v("ayc-cookie-add", "empty list");
+                return;
+            }
+            if (list.size() == 0) {
+                Log.v("ayc-cookie-add", "empty list");
+                return;
+            }
             for (String cookie : list) {
                 String[] allparts = cookie.split(";");
                 String[] cookie_parts = allparts[0].split("=");
@@ -85,13 +89,15 @@ public class AycCookieManager {
                 this.saveCookies();
             }
         } catch (Exception e) {
-            Log.v("ayc-cookie-load", "failed to update cookie store");
+            Log.v("ayc-cookie-add", "failed to update cookie store");
+            Log.v("ayc-cookie-add", e.getMessage());
         }
     }
 
     public void clearCookies() {
         if (this.mCookieManager != null) {
             this.mCookieManager.getCookieStore().removeAll();
+            Log.v("ayc-cookie-clear", "clear cookies");
             this.saveCookies();
         }
     }
@@ -142,7 +148,7 @@ public class AycCookieManager {
 
         if (!isCookieManagerEmpty()) {
             for (HttpCookie eachCookie : getCookies()) {
-                Log.v("ayc-coookie-manager",String.format("%s=%s; ", eachCookie.getName(), eachCookie.getValue()));
+                Log.v("ayc-cookie-get", String.format("%s=%s; ", eachCookie.getName(), eachCookie.getValue()));
                 cookieValue = cookieValue + String.format("%s=%s; ", eachCookie.getName(), eachCookie.getValue());
             }
         }

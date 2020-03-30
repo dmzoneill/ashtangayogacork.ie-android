@@ -17,4 +17,16 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name ="dataTable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:weightSum">100</item>
+        <item name="android:divider">@color/colorAccent</item>
+        <item name="android:dividerPadding">0dp</item>
+        <item name="android:showDividers">middle</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:layout_margin">1dp</item>
+    </style>
+
 </resources>

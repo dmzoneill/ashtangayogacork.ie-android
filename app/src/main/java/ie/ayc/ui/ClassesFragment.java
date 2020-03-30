@@ -1,6 +1,7 @@
 package ie.ayc.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,33 +10,43 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import ie.ayc.AycCookieManager;
+import ie.ayc.AycNavigationActivity;
+import ie.ayc.Common;
 import ie.ayc.Observer;
-import ie.ayc.PurchaseActivity;
 import ie.ayc.R;
 import ie.ayc.ScraperManager;
 import ie.ayc.UpdateSource;
 
 public class ClassesFragment extends Fragment implements Observer {
 
+    private Map<String,Button> book_buttons = new HashMap<String,Button>();
     private View root;
 
     public ClassesFragment(){
@@ -78,8 +89,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 @Override
                 public void onClick(View v) {
                     AycCookieManager.getInstance().clearCookies();
-                    Toast.makeText(v.getContext(), "Logging Out", Toast.LENGTH_LONG).show();
-                    getActivity().finish();
+                    Common.alert(getContext(), "Logging Out");
                 }
             });
         }
@@ -87,7 +97,63 @@ public class ClassesFragment extends Fragment implements Observer {
             Log.v("ayc-classes", e.getMessage());
         }
 
+        this.setupRedeemButton();
+
         return root;
+    }
+
+    private void setupRedeemButton(){
+        final Button redeem_button = this.root.findViewById(R.id.button_redeem);
+
+        redeem_button.setOnClickListener(new View.OnClickListener() {
+            //@SuppressWarnings("deprecation")
+            public void onClick(final View view) {
+
+                // Creating alert Dialog with one Button
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ClassesFragment.this.root.getContext());
+
+                // Setting Dialog Title
+                alertDialog.setTitle("Redeem Code");
+
+                FrameLayout container = new FrameLayout(getActivity().getApplicationContext());
+                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+
+                // Setting Dialog Message
+                alertDialog.setMessage("Enter code");
+                final EditText input = new EditText(ClassesFragment.this.root.getContext());
+                input.setLayoutParams(params);
+                input.setBackgroundResource(R.drawable.login_input);
+                input.setHint("CODE");
+                input.setGravity(Gravity.CENTER);
+                container.addView(input);
+                alertDialog.setView(container);
+
+                // Setting Icon to Dialog
+                alertDialog.setIcon(R.drawable.sticker_ganesh);
+
+                // Setting Positive "Yes" Button
+                alertDialog.setPositiveButton("Redeem",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int which) {
+                                // Write your code here to execute after dialog
+
+                            }
+                        });
+                // Setting Negative "NO" Button
+                alertDialog.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Write your code here to execute after dialog
+                                dialog.cancel();
+                            }
+                        });
+
+                // Showing Alert Message
+                alertDialog.show();
+            }
+        });
     }
 
     private void updateClasses() {
@@ -97,24 +163,27 @@ public class ClassesFragment extends Fragment implements Observer {
         JSONArray classes = ScraperManager.getClasses(0);
         Log.v("ayc-classes", " classes: " + classes.length());
 
-        LinearLayout lm = this.root.findViewById(R.id.events_table);
+        TableLayout lm = this.root.findViewById(R.id.events_table);
         lm.removeAllViews();
         this.addrows(lm,stickies);
 
-        LinearLayout ls = this.root.findViewById(R.id.schedule_table);
+        TableLayout ls = this.root.findViewById(R.id.schedule_table);
         ls.removeAllViews();
         this.addrows(ls,classes);
     }
 
-    private void addrows(LinearLayout ll, JSONArray classes){
+    private void addrows(TableLayout ll, JSONArray classes){
         try {
             String lastweek = "";
             String lastdate = "";
             Log.v("ayc-classes-table", " lenght: " + classes.length());
+
+            LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
             for (int t = 0; t < classes.length(); t++) {
                 Log.v("ayc-classes", " row: " + t);
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LinearLayout classcontainer = (LinearLayout) vi.inflate(R.layout.classes_table_row_time, null);
+
+                TableRow classcontainer = (TableRow) vi.inflate(R.layout.classes_table_row_time, null);
                 JSONObject classs = classes.getJSONObject(t);
 
                 String date = classs.get("date").toString();
@@ -124,19 +193,45 @@ public class ClassesFragment extends Fragment implements Observer {
                 Log.v("ayc-class-week", week);
 
                 if(lastweek.compareTo(week)!=0) {
-                    LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    LinearLayout weekcontainer = (LinearLayout) wvi.inflate(R.layout.classes_table_row_week, null);
+                    TableRow weekcontainer = (TableRow) vi.inflate(R.layout.classes_table_row_week, null);
                     TextView weektv = (TextView) weekcontainer.getChildAt(0);
                     weektv.setText("Week " + week);
                     ll.addView(weekcontainer);
+
+                    TableRow hrcontainer = (TableRow) vi.inflate(R.layout.classes_table_row_week_red_hr, null);
+                    ll.addView(hrcontainer);
                 }
 
                 if(lastdate.compareTo(date)!=0) {
-                    LayoutInflater dvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    LinearLayout datecontainer = (LinearLayout) dvi.inflate(R.layout.classes_table_row_day, null);
+                    TableRow datecontainer = (TableRow) vi.inflate(R.layout.classes_table_row_day, null);
                     TextView datetv = (TextView) datecontainer.getChildAt(0);
                     datetv.setText(date);
                     ll.addView(datecontainer);
+                }
+
+                TextView tvi = classcontainer.findViewById(R.id.class_instructor);
+                tvi.setText(classs.get("instructor").toString());
+
+                TextView tvct = classcontainer.findViewById(R.id.class_time);
+                tvct.setText(classs.get("start_time").toString() + " - " + classs.get("end_time").toString());
+
+                TextView tvcn = classcontainer.findViewById(R.id.class_name);
+                tvcn.setText(classs.get("name").toString());
+
+                final Button btbk = classcontainer.findViewById(R.id.class_button);
+                btbk.setText(classs.get("button_text").toString());
+                btbk.setTag(classs.get("class_id").toString());
+                this.book_buttons.put(classs.get("class_id").toString(), btbk);
+
+                btbk.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ClassesFragment.this.book_button_click(btbk);
+                    }
+                });
+
+                if(classs.get("button_text").toString().compareTo("Cancelled") != 0 && Integer.parseInt(classs.get("max_attendees").toString()) == 0){
+                    btbk.setVisibility(View.GONE);
                 }
 
                 ll.addView(classcontainer);
@@ -152,16 +247,53 @@ public class ClassesFragment extends Fragment implements Observer {
         }
     }
 
+    private void book_button_click(Button btn){
+        try {
+            String class_id = btn.getTag().toString();
+            Log.v("ayc-class-book", class_id);
+            JSONObject aycclass = ScraperManager.getClassById(class_id);
+            TextView tvc = this.root.findViewById(R.id.textview_available_count);
+            int quotaavail = Integer.parseInt(tvc.getText().toString());
+
+            if (aycclass.get("disabled").toString().compareTo("true") == 0) {
+                return;
+            }
+
+            if (quotaavail <= 0 && aycclass.get("free").toString().compareTo("false") == 0) {
+                Common.alert(this.getContext(),"You are out of credits, please purchase");
+                return;
+            }
+
+            if(aycclass.get("cancellation_warning").toString().compareTo("true") == 0){
+                //warn can't be cancelled
+            }
+
+
+        }
+        catch(Exception e){
+            Log.v("ayc-classes", e.getMessage());
+        }
+    }
+
+    private void book_class(String class_id) {
+
+    }
+
     private void updateCredits() {
         try {
             JSONArray profile = ScraperManager.getProfile();
             JSONObject obj = profile.getJSONObject(2);
             String credits_available = obj.getString("credits_available");
-            //String available_monthlys = obj.getString("available_monthlys");
+            int available_monthlys = Integer.parseInt(obj.getString("available_monthlys"));
             JSONObject types = obj.getJSONObject("credit_type");
 
             LinearLayout ll = this.root.findViewById(R.id.credit_types);
             ll.removeAllViews();
+
+            if(available_monthlys==0) {
+                Button button = this.root.findViewById(R.id.button_start_monthly);
+                button.setVisibility(View.GONE);
+            }
 
             for (Iterator<String> it = types.keys(); it.hasNext(); ) {
                 String str = it.next();

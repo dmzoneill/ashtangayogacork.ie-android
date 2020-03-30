@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:paddingRight="10dp"
                     android:textColor="@android:color/holo_red_dark"
-                    android:textSize="20sp"/>
+                    android:textSize="22sp"/>
 
                 <Button
                     android:text="Activate Monthly"
@@ -125,16 +125,14 @@
                 android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/events_table"
                 android:orientation="vertical"
                 android:layout_marginRight="6dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginBottom="15dp"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </LinearLayout>
+                android:layout_height="wrap_content"/>
 
             <ImageView
                 android:layout_width="69dp"
@@ -152,16 +150,14 @@
                 android:fontFamily="@font/ubuntu"
                 android:textSize="20sp"/>
 
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/schedule_table"
                 android:orientation="vertical"
                 android:layout_marginRight="6dp"
                 android:layout_marginLeft="6dp"
                 android:layout_marginBottom="15dp"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </LinearLayout>
+                android:layout_height="wrap_content"/>
 
             <ImageView
                 android:layout_width="69dp"

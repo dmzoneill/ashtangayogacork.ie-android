@@ -28,6 +28,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     private static JSONArray transactions;
     private static JSONArray used_credit;
     private static JSONArray expiring_credit;
+    private static JSONObject add_booking;
 
     private ScraperManager() {
         //set context variables if required
@@ -37,23 +38,11 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         this.delegate = this;
     }
 
-    public static JSONArray getClasses(int filter_sticky){
-        JSONArray filtered = new JSONArray();
-
-        try {
-            for (int y = 0; y < classes.length(); y++) {
-                JSONObject jo = classes.getJSONObject(y);
-
-                if(jo.get("sticky").toString().compareToIgnoreCase(String.valueOf(filter_sticky))==0){
-                    filtered.put(jo);
-                }
-            }
+    public static ScraperManager getInstance(){
+        if(instance == null){
+            instance = new ScraperManager();
         }
-        catch (Exception e){
-            Log.v("ayc-scraper", " classes filter error: " + e.getStackTrace());
-        }
-
-        return filtered;
+        return instance;
     }
 
     public static JSONArray getProfile(){
@@ -116,11 +105,42 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         return filtered;
     }
 
-    public static ScraperManager getInstance(){
-        if(instance == null){
-            instance = new ScraperManager();
+
+    public static JSONArray getClasses(int filter_sticky){
+        JSONArray filtered = new JSONArray();
+
+        try {
+            for (int y = 0; y < classes.length(); y++) {
+                JSONObject jo = classes.getJSONObject(y);
+
+                if(jo.get("sticky").toString().compareToIgnoreCase(String.valueOf(filter_sticky))==0){
+                    filtered.put(jo);
+                }
+            }
         }
-        return instance;
+        catch (Exception e){
+            Log.v("ayc-scraper", " classes filter error: " + e.getStackTrace());
+        }
+
+        return filtered;
+    }
+
+    public static JSONObject getClassById(String id){
+        try {
+            for (int y = 0; y < classes.length(); y++) {
+                JSONObject jo = classes.getJSONObject(y);
+
+                if(jo.get("class_id").toString().compareToIgnoreCase(id)==0){
+                    return jo;
+                }
+            }
+        }
+        catch (Exception e){
+            Log.v("ayc-scraper-class", " get class by id : " + e.getStackTrace());
+            return null;
+        }
+
+        return null;
     }
 
     public void fetch_all() {
@@ -152,8 +172,12 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         ScraperManager task6 = new ScraperManager();
         task6.delegate = this.this_async;
         task6.execute("https://ashtangayoga.ie/json/?a=get_expiring_credit");
+    }
 
-
+    public void book_class_add(String class_id){
+        ScraperManager book_class = new ScraperManager();
+        book_class.delegate = this.this_async;
+        book_class.execute("https://ashtangayoga.ie/json/?a=add_booking&class_id="+class_id);
     }
 
     @Override
@@ -264,6 +288,10 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
                 case "get_used_credit":
                     used_credit = reader.getJSONArray("result");
                     this.object_notify(UpdateSource.profile);
+                    break;
+                case "add_booking":
+                    add_booking = reader.getJSONObject("result");
+                    this.object_notify(UpdateSource.classes);
                     break;
                 case "get_expiring_credit":
                     expiring_credit = reader.getJSONArray("result");

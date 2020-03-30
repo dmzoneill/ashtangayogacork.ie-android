@@ -2,12 +2,14 @@ package ie.ayc;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,6 +35,39 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        final EditText editname = this.findViewById(R.id.edittext_username);
+        editname.setOnFocusChangeListener( new View.OnFocusChangeListener() {
+            public void onFocusChange( View v, boolean hasFocus ) {
+                if( hasFocus ) {
+                    editname.setText( "", TextView.BufferType.EDITABLE );
+                }
+            }
+        });
+
+        TextView rtv = this.findViewById(R.id.register_link);
+        rtv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://ashtangayoga.ie/wp-login.php?action=register")));
+            }
+        });
+
+        TextView ltv = this.findViewById(R.id.lost_password_link);
+        ltv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://ashtangayoga.ie/wp-login.php?action=lostpassword")));
+            }
+        });
+
+        stage = 0;
+        this.check_logged_in();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         stage = 0;
         this.check_logged_in();
     }
@@ -55,20 +90,36 @@ public class Login extends AppCompatActivity implements AsyncResponse {
                 EditText usernameField = findViewById(R.id.edittext_username);
                 EditText passwordField = findViewById(R.id.edittext_password);
 
-                if (usernameField.getText().length() < 3) {
-                    Toast username_too_short = Toast.makeText(getApplicationContext(), "Username too short", Toast.LENGTH_LONG);
-                    username_too_short.show();
+                String uname = usernameField.getText().toString();
+                String pword = passwordField.getText().toString();
+
+                if (uname.compareToIgnoreCase("name") == 0) {
+                    Common.alert(getBaseContext(), "Please enter your username");
                     return;
                 }
 
-                if (passwordField.getText().length() < 3) {
-                    Toast password_too_short = Toast.makeText(getApplicationContext(), "Password too short", Toast.LENGTH_LONG);
-                    password_too_short.show();
+                if (uname.length() < 3) {
+                    Common.alert(getBaseContext(), "Username too short");
+                    return;
+                }
+
+                if (pword.length() < 3) {
+                    Common.alert(getBaseContext(), "Password too short");
                     return;
                 }
 
                 String postfields = "log=" + usernameField.getText() + "&pwd=" + passwordField.getText() + "&wp-submit=Log+In&redirect_to=https%3A%2F%2Fashtangayoga.ie%2Fprofile%2F&testcookie=1";
                 task.execute("https://ashtangayoga.ie/wp-login.php", postfields);
+            }
+        });
+
+        ImageButton facebookButton = findViewById(R.id.login_button_facebook);
+
+        facebookButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Login.this, SocialLoginManager.class);
+                myIntent.putExtra("url", "https://www.facebook.com/login.php?skip_api_login=1&api_key=489379651801344&kid_directed_site=0&app_id=489379651801344&signed_next=1&next=https%3A%2F%2Fwww.facebook.com%2Fv3.2%2Fdialog%2Foauth%3Fdisplay%3Dpopup%26response_type%3Dcode%26client_id%3D489379651801344%26redirect_uri%3Dhttps%253A%252F%252Fashtangayoga.ie%252Fwp-login.php%253FloginSocial%253Dfacebook%26state%3Dcb92ff6b7e1a530d849f53313e43a2ae%26scope%3Dpublic_profile%252Cemail%26ret%3Dlogin%26fbapp_pres%3D0%26logger_id%3Dec48732f-9d02-48cc-acd4-2afc5e54d620&cancel_url=https%3A%2F%2Fashtangayoga.ie%2Fwp-login.php%3FloginSocial%3Dfacebook%26error%3Daccess_denied%26error_code%3D200%26error_description%3DPermissions%2Berror%26error_reason%3Duser_denied%26state%3Dcb92ff6b7e1a530d849f53313e43a2ae%23_%3D_&display=popup&locale=en_US&pl_dbl=0"); //Optional parameters
+                Login.this.startActivity(myIntent);
             }
         });
     }
@@ -91,6 +142,7 @@ public class Login extends AppCompatActivity implements AsyncResponse {
             if (stage == 0) {
                 if (reader.getString("result").compareToIgnoreCase("false") == 0) {
                     Log.v("ayc-delegate-button", "enabled");
+                    AycCookieManager.getInstance().clearCookies();
                     this.enableLoginButton();
                 } else {
                     Log.v("ayc-delegate-button", "login success send intent");
@@ -103,6 +155,7 @@ public class Login extends AppCompatActivity implements AsyncResponse {
             } else if (stage == 2) {
                 if (reader.getString("result").compareToIgnoreCase("false") == 0) {
                     Log.v("ayc-delegate", "login failed confirmed");
+                    AycCookieManager.getInstance().clearCookies();
                 } else {
                     Log.v("ayc-delegate-button", "login success send intent");
                     this.loginProcessed();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/classes_day_week"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,10 +14,4 @@
         android:textStyle="bold"
         android:textSize="14sp"/>
 
-    <TableRow
-        android:id="@+id/hr"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#FF0000"/>
-
-</LinearLayout>
+</TableRow>

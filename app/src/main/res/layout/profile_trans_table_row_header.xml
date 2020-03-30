@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/transaction_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="6dp"
+    android:layout_marginRight="6dp">
+
+    <TextView
+        android:text="Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:text="Transaction &amp; Payee"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:text="Type"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:text="Receipt"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:text="Gift"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"/>
+</TableRow>
