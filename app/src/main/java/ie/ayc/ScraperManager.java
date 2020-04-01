@@ -144,34 +144,23 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     }
 
     public void fetch_all() {
+        int i = 0;
+        String json_endpoint = "https://ashtangayoga.ie/json/?a=";
 
-        ScraperManager task0 = new ScraperManager();
-        task0.delegate = this.this_async;
-        task0.execute("https://ashtangayoga.ie/json/?a=get_transactions");
+        String[] urls = new String[7];
+        urls[i++] = "get_profile";
+        urls[i++] = "get_used_credit";
+        urls[i++] = "get_expiring_credit";
+        urls[i++] = "get_transactions";
+        urls[i++] = "get_bookings";
+        urls[i++] = "get_classes";
+        urls[i++] = "get_prices";
 
-        ScraperManager task1 = new ScraperManager();
-        task1.delegate = this.this_async;
-        task1.execute("https://ashtangayoga.ie/json/?a=get_bookings");
-
-        ScraperManager task2 = new ScraperManager();
-        task2.delegate = this.this_async;
-        task2.execute("https://ashtangayoga.ie/json/?a=get_classes");
-
-        ScraperManager task3 = new ScraperManager();
-        task3.delegate = this.this_async;
-        task3.execute("https://ashtangayoga.ie/json/?a=get_prices");
-
-        ScraperManager task4 = new ScraperManager();
-        task4.delegate = this.this_async;
-        task4.execute("https://ashtangayoga.ie/json/?a=get_profile");
-
-        ScraperManager task5 = new ScraperManager();
-        task5.delegate = this.this_async;
-        task5.execute("https://ashtangayoga.ie/json/?a=get_used_credit");
-
-        ScraperManager task6 = new ScraperManager();
-        task6.delegate = this.this_async;
-        task6.execute("https://ashtangayoga.ie/json/?a=get_expiring_credit");
+        for(String action: urls) {
+            ScraperManager task = new ScraperManager();
+            task.delegate = this.this_async;
+            task.execute(json_endpoint+action);
+        }
     }
 
     public void book_class_add(String class_id){
@@ -264,6 +253,13 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         Log.v("ayc-scraper", output);
         try {
             JSONObject reader = new JSONObject(output);
+
+            Object obj = reader.get("result");
+            if(obj instanceof Boolean) {
+                this.object_notify(UpdateSource.logout);
+                return;
+            }
+
             switch (reader.getString("action")) {
                 case "get_bookings":
                     bookings = reader.getJSONArray("result");
@@ -338,6 +334,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     @Override
     public void notify_all() {
         for (UpdateSource source : UpdateSource.values()) {
+            if(source == UpdateSource.logout) continue;
             this.object_notify(source);
         }
     }

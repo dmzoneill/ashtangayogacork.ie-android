@@ -2,6 +2,7 @@ package ie.ayc;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class AycNavigationActivity extends AppCompatActivity {
+public class AycNavigationActivity extends AppCompatActivity implements Observer {
+
+    public AycNavigationActivity(){
+        ScraperManager.getInstance().attach(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,5 +35,24 @@ public class AycNavigationActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        ScraperManagerScheduler.schedule_task(getApplicationContext());
+    }
+
+    @Override
+    public void update(UpdateSource updatesource) {
+        try{
+            if(updatesource == UpdateSource.logout) {
+                finish();
+                return;
+            }
+        }
+        catch(Exception e){
+            Log.v("ayc-aycnav", e.getMessage());
+        }
     }
 }

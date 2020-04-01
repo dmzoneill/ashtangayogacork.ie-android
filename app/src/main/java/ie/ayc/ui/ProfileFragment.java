@@ -37,12 +37,6 @@ public class ProfileFragment extends Fragment implements Observer {
 
     private View root;
 
-    public ProfileFragment(){
-        ScraperManager sm = ScraperManager.getInstance();
-        sm.attach(this);
-        sm.object_notify(UpdateSource.profile);
-    }
-
     public static Spannable getColoredString(String mString) {
         Spannable spannable = new SpannableString(mString);
         spannable.setSpan(new RelativeSizeSpan(1.5f), 0, 1, 0); // set size

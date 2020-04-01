@@ -2,7 +2,6 @@ package ie.ayc.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -22,14 +21,12 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -37,23 +34,17 @@ import java.util.Iterator;
 import java.util.Map;
 
 import ie.ayc.AycCookieManager;
-import ie.ayc.AycNavigationActivity;
 import ie.ayc.Common;
 import ie.ayc.Observer;
 import ie.ayc.R;
 import ie.ayc.ScraperManager;
+import ie.ayc.ScraperManagerScheduler;
 import ie.ayc.UpdateSource;
 
 public class ClassesFragment extends Fragment implements Observer {
 
-    private Map<String,Button> book_buttons = new HashMap<String,Button>();
+    private Map<String, Button> book_buttons = new HashMap<String, Button>();
     private View root;
-
-    public ClassesFragment(){
-        ScraperManager sm = ScraperManager.getInstance();
-        sm.attach(this);
-        sm.object_notify(UpdateSource.classes);
-    }
 
     public static Spannable getColoredString(String mString) {
         Spannable spannable = new SpannableString(mString);
@@ -77,10 +68,6 @@ public class ClassesFragment extends Fragment implements Observer {
             tv.setText(getColoredString(old_text));
         }
 
-        ScraperManager sm = ScraperManager.getInstance();
-        sm.attach(this);
-        sm.object_notify(UpdateSource.classes);
-
         try {
             ImageView iv = this.root.findViewById(R.id.person);
 
@@ -90,19 +77,23 @@ public class ClassesFragment extends Fragment implements Observer {
                 public void onClick(View v) {
                     AycCookieManager.getInstance().clearCookies();
                     Common.alert(getContext(), "Logging Out");
+                    getActivity().finish();
                 }
             });
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Log.v("ayc-classes", e.getMessage());
         }
 
         this.setupRedeemButton();
 
+        ScraperManager sm = ScraperManager.getInstance();
+        sm.attach(this);
+        sm.object_notify(UpdateSource.classes);
+
         return root;
     }
 
-    private void setupRedeemButton(){
+    private void setupRedeemButton() {
         final Button redeem_button = this.root.findViewById(R.id.button_redeem);
 
         redeem_button.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +107,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 alertDialog.setTitle("Redeem Code");
 
                 FrameLayout container = new FrameLayout(getActivity().getApplicationContext());
-                FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
                 params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
 
@@ -136,7 +127,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 // Setting Positive "Yes" Button
                 alertDialog.setPositiveButton("Redeem",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int which) {
+                            public void onClick(DialogInterface dialog, int which) {
                                 // Write your code here to execute after dialog
 
                             }
@@ -154,6 +145,16 @@ public class ClassesFragment extends Fragment implements Observer {
                 alertDialog.show();
             }
         });
+
+        final Button refresh = this.root.findViewById(R.id.button_refresh);
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            //@SuppressWarnings("deprecation")
+            public void onClick(final View view) {
+                Log.v("ayc-classes", " clicked");
+                ScraperManagerScheduler.schedule_task(getContext());
+            }
+        });
     }
 
     private void updateClasses() {
@@ -165,14 +166,14 @@ public class ClassesFragment extends Fragment implements Observer {
 
         TableLayout lm = this.root.findViewById(R.id.events_table);
         lm.removeAllViews();
-        this.addrows(lm,stickies);
+        this.addrows(lm, stickies);
 
         TableLayout ls = this.root.findViewById(R.id.schedule_table);
         ls.removeAllViews();
-        this.addrows(ls,classes);
+        this.addrows(ls, classes);
     }
 
-    private void addrows(TableLayout ll, JSONArray classes){
+    private void addrows(TableLayout ll, JSONArray classes) {
         try {
             String lastweek = "";
             String lastdate = "";
@@ -192,7 +193,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 String week = classs.get("week").toString();
                 Log.v("ayc-class-week", week);
 
-                if(lastweek.compareTo(week)!=0) {
+                if (lastweek.compareTo(week) != 0) {
                     TableRow weekcontainer = (TableRow) vi.inflate(R.layout.classes_table_row_week, null);
                     TextView weektv = (TextView) weekcontainer.getChildAt(0);
                     weektv.setText("Week " + week);
@@ -202,7 +203,7 @@ public class ClassesFragment extends Fragment implements Observer {
                     ll.addView(hrcontainer);
                 }
 
-                if(lastdate.compareTo(date)!=0) {
+                if (lastdate.compareTo(date) != 0) {
                     TableRow datecontainer = (TableRow) vi.inflate(R.layout.classes_table_row_day, null);
                     TextView datetv = (TextView) datecontainer.getChildAt(0);
                     datetv.setText(date);
@@ -226,11 +227,12 @@ public class ClassesFragment extends Fragment implements Observer {
                 btbk.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.v("ayc-class-book", "clicked");
                         ClassesFragment.this.book_button_click(btbk);
                     }
                 });
 
-                if(classs.get("button_text").toString().compareTo("Cancelled") != 0 && Integer.parseInt(classs.get("max_attendees").toString()) == 0){
+                if (classs.get("button_text").toString().compareTo("Cancelled") != 0 && Integer.parseInt(classs.get("max_attendees").toString()) == 0) {
                     btbk.setVisibility(View.GONE);
                 }
 
@@ -241,13 +243,12 @@ public class ClassesFragment extends Fragment implements Observer {
 
                 Log.v("ayc-classes", " added row");
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Log.v("ayc-classes", e.getMessage());
         }
     }
 
-    private void book_button_click(Button btn){
+    private void book_button_click(Button btn) {
         try {
             String class_id = btn.getTag().toString();
             Log.v("ayc-class-book", class_id);
@@ -260,23 +261,52 @@ public class ClassesFragment extends Fragment implements Observer {
             }
 
             if (quotaavail <= 0 && aycclass.get("free").toString().compareTo("false") == 0) {
-                Common.alert(this.getContext(),"You are out of credits, please purchase");
+                Common.alert(this.getContext(), "You are out of credits, please purchase");
                 return;
             }
 
-            if(aycclass.get("cancellation_warning").toString().compareTo("true") == 0){
+            if (aycclass.get("cancellation_warning").toString().compareTo("true") == 0) {
+                this.book_button_confirm("Confirm booking", "This booking cannot be cancelled", class_id);
                 //warn can't be cancelled
             }
 
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Log.v("ayc-classes", e.getMessage());
         }
     }
 
-    private void book_class(String class_id) {
+    private void book_button_confirm(String title, String message, final String class_id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
+        builder.setTitle(title);
+        builder.setMessage(message);
+
+        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing but close the dialog
+                ClassesFragment.this.book_class(class_id);
+                dialog.dismiss();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Do nothing
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void book_class(String class_id) {
+        Log.v("ayc-classes", class_id);
     }
 
     private void updateCredits() {
@@ -290,7 +320,7 @@ public class ClassesFragment extends Fragment implements Observer {
             LinearLayout ll = this.root.findViewById(R.id.credit_types);
             ll.removeAllViews();
 
-            if(available_monthlys==0) {
+            if (available_monthlys == 0) {
                 Button button = this.root.findViewById(R.id.button_start_monthly);
                 button.setVisibility(View.GONE);
             }
@@ -305,17 +335,15 @@ public class ClassesFragment extends Fragment implements Observer {
                     credit_amount.setText(types.getString(str));
                     credit_type.setText(str);
                     ll.addView(credit_type_row);
-                }
-                catch(Exception e){
+                } catch (Exception e) {
 
                 }
             }
 
             TextView tv = this.root.findViewById(R.id.textview_available_count);
             tv.setText(credits_available);
-        }
-        catch(Exception e) {
-            Log.v("ayc-classes",e.getMessage());
+        } catch (Exception e) {
+            Log.v("ayc-classes", e.getMessage());
         }
     }
 
@@ -343,8 +371,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 tvinstr.setText(booking.getString("instructor_name"));
 
                 ll.addView(booking_row);
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 Log.v("ayc-classes", e.getMessage());
             }
         }
@@ -354,15 +381,14 @@ public class ClassesFragment extends Fragment implements Observer {
     public void update(UpdateSource updatesource) {
         Log.v("ayc-classes", "update");
 
-        if(updatesource != UpdateSource.classes) return;
-
         try {
+            if (updatesource != UpdateSource.classes) return;
+
             Log.v("ayc-classes", "update accepted");
             this.updateClasses();
             this.updateCredits();
             this.updateBookings();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.v("ayc-classes", e.getMessage());
         }
     }

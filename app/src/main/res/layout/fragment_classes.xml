@@ -140,6 +140,16 @@
                 android:layout_gravity="center"
                 android:src="@drawable/sticker_ganesh" />
 
+            <Button
+                android:text="Refresh"
+                android:id="@+id/button_refresh"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
+                android:fontFamily="@font/ubuntu"
+                android:textAllCaps="false"
+                android:textSize="12sp"/>
+
             <TextView
                 android:id="@+id/schedule"
                 android:text="Schedule"

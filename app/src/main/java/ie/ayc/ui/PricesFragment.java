@@ -32,12 +32,6 @@ public class PricesFragment extends Fragment implements Observer {
 
     private View root;
 
-    public PricesFragment(){
-        ScraperManager sm = ScraperManager.getInstance();
-        sm.attach(this);
-        sm.object_notify(UpdateSource.prices);
-    }
-
     public static Spannable getColoredString(String mString) {
         Spannable spannable = new SpannableString(mString);
         spannable.setSpan(new RelativeSizeSpan(1.5f), 0, 1, 0); // set size
@@ -149,8 +143,8 @@ public class PricesFragment extends Fragment implements Observer {
 
     @Override
     public void update(UpdateSource updatesource) {
-        if(updatesource != UpdateSource.prices) return;
         try {
+            if(updatesource != UpdateSource.prices) return;
             this.update_tables();
         }
         catch (Exception e){
