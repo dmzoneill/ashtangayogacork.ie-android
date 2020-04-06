@@ -22,10 +22,12 @@ import androidx.fragment.app.Fragment;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import ie.ayc.Common;
 import ie.ayc.Observer;
 import ie.ayc.PurchaseActivity;
 import ie.ayc.R;
 import ie.ayc.ScraperManager;
+import ie.ayc.UpdateResponse;
 import ie.ayc.UpdateSource;
 
 public class PricesFragment extends Fragment implements Observer {
@@ -149,6 +151,21 @@ public class PricesFragment extends Fragment implements Observer {
         }
         catch (Exception e){
             Log.v("ayc-prices-update", e.getMessage());
+        }
+    }
+
+    @Override
+    public void update(UpdateSource updatesource, UpdateResponse ur) {
+        Log.v("ayc-classes", "update response");
+
+        try {
+            if (updatesource != UpdateSource.classes) return;
+
+            if(ur.response.has("success")) {
+                Common.alert(this.getContext(), "class booked");
+            }
+        } catch (Exception e) {
+            Log.v("ayc-classes", e.getMessage());
         }
     }
 }

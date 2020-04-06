@@ -18,8 +18,6 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
 
     private static ArrayList<Observer> observers;
     private static ScraperManager instance;
-    private final AsyncResponse this_async;
-    public AsyncResponse delegate = null;
     private static String page_welcome;
     private static JSONArray profile;
     private static JSONArray classes;
@@ -28,40 +26,44 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     private static JSONArray transactions;
     private static JSONArray used_credit;
     private static JSONArray expiring_credit;
-    private static JSONObject add_booking;
+
+    static {
+        ScraperManager.observers = new ArrayList<>();
+    }
+
+    private final AsyncResponse this_async;
+    public AsyncResponse delegate = null;
 
     private ScraperManager() {
         //set context variables if required
-        observers = new ArrayList<>();
-
         this.this_async = this;
         this.delegate = this;
     }
 
-    public static ScraperManager getInstance(){
-        if(instance == null){
+    public static ScraperManager getInstance() {
+        if (instance == null) {
             instance = new ScraperManager();
         }
         return instance;
     }
 
-    public static JSONArray getProfile(){
+    public static JSONArray getProfile() {
         return profile;
     }
 
-    public static JSONArray getBookings(){
+    public static JSONArray getBookings() {
         return bookings;
     }
 
-    public static JSONArray getExpiringCredit(){
+    public static JSONArray getExpiringCredit() {
         return expiring_credit;
     }
 
-    public static JSONArray getUsedCredit(){
+    public static JSONArray getUsedCredit() {
         return used_credit;
     }
 
-    public static JSONArray getTransactions(){
+    public static JSONArray getTransactions() {
         return transactions;
     }
 
@@ -74,31 +76,30 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
             for (int y = 0; y < prices.length(); y++) {
                 JSONObject jo = prices.getJSONObject(y);
 
-                Log.v("ayc-scraper", " prices filter " + String.valueOf(y) + " / " + prices.length());
+                Log.v("ayc-scraper", " prices filter " + y + " / " + prices.length());
                 switch (filter) {
                     case 0:
                         Log.v("ayc-scraper", " prices filter monthly: " + jo.get("monthly").toString());
-                        if(jo.get("monthly").toString().compareToIgnoreCase("1") == 0){
+                        if (jo.get("monthly").toString().compareToIgnoreCase("1") == 0) {
                             filtered.put(jo);
                         }
                         break;
                     case 1:
                         Log.v("ayc-scraper", " prices filter special: " + jo.get("class_type_restriction").toString());
-                        if(jo.get("class_type_restriction").toString().compareToIgnoreCase("null") != 0){
+                        if (jo.get("class_type_restriction").toString().compareToIgnoreCase("null") != 0) {
                             filtered.put(jo);
                         }
                         break;
                     case 2:
                     default:
                         Log.v("ayc-scraper", " prices filter standard: " + jo.get("monthly").toString());
-                        if(jo.get("monthly").toString().compareToIgnoreCase("0") == 0){
+                        if (jo.get("monthly").toString().compareToIgnoreCase("0") == 0) {
                             filtered.put(jo);
                         }
                         break;
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.v("ayc-scraper", " prices filter error: " + e.getMessage());
         }
 
@@ -106,36 +107,34 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     }
 
 
-    public static JSONArray getClasses(int filter_sticky){
+    public static JSONArray getClasses(int filter_sticky) {
         JSONArray filtered = new JSONArray();
 
         try {
             for (int y = 0; y < classes.length(); y++) {
                 JSONObject jo = classes.getJSONObject(y);
 
-                if(jo.get("sticky").toString().compareToIgnoreCase(String.valueOf(filter_sticky))==0){
+                if (jo.get("sticky").toString().compareToIgnoreCase(String.valueOf(filter_sticky)) == 0) {
                     filtered.put(jo);
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.v("ayc-scraper", " classes filter error: " + e.getStackTrace());
         }
 
         return filtered;
     }
 
-    public static JSONObject getClassById(String id){
+    public static JSONObject getClassById(String id) {
         try {
             for (int y = 0; y < classes.length(); y++) {
                 JSONObject jo = classes.getJSONObject(y);
 
-                if(jo.get("class_id").toString().compareToIgnoreCase(id)==0){
+                if (jo.get("class_id").toString().compareToIgnoreCase(id) == 0) {
                     return jo;
                 }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.v("ayc-scraper-class", " get class by id : " + e.getStackTrace());
             return null;
         }
@@ -156,17 +155,39 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         urls[i++] = "get_classes";
         urls[i++] = "get_prices";
 
-        for(String action: urls) {
+        for (String action : urls) {
             ScraperManager task = new ScraperManager();
             task.delegate = this.this_async;
-            task.execute(json_endpoint+action);
+            task.execute(json_endpoint + action);
         }
     }
 
-    public void book_class_add(String class_id){
+    public void begin_monthly() {
+        Log.v("ayc-scraper-update", "begin_monthly: " + observers.size());
+        ScraperManager begin_monthly = new ScraperManager();
+        begin_monthly.delegate = this.this_async;
+        begin_monthly.execute("https://ashtangayoga.ie/json/?a=begin_monthly");
+    }
+
+    public void apply_redeem_code(String code) {
+        Log.v("ayc-scraper-update", "book_class_add all: " + observers.size());
+        ScraperManager apply_redeem_code = new ScraperManager();
+        apply_redeem_code.delegate = this.this_async;
+        apply_redeem_code.execute("https://ashtangayoga.ie/json/?a=redeem_code&code=" + code);
+    }
+
+    public void book_class_add(String class_id) {
+        Log.v("ayc-scraper-update", "book_class_add all: " + observers.size());
         ScraperManager book_class = new ScraperManager();
         book_class.delegate = this.this_async;
-        book_class.execute("https://ashtangayoga.ie/json/?a=add_booking&class_id="+class_id);
+        book_class.execute("https://ashtangayoga.ie/json/?a=add_booking&id=actionButton" + class_id);
+    }
+
+    public void book_class_remove(String class_id) {
+        Log.v("ayc-scraper-update", "book_class_remove all: " + observers.size());
+        ScraperManager remove_class = new ScraperManager();
+        remove_class.delegate = this.this_async;
+        remove_class.execute("https://ashtangayoga.ie/json/?a=cancel_booking&id=actionButton" + class_id);
     }
 
     @Override
@@ -189,6 +210,8 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
 
         AycCookieManager ayccm = AycCookieManager.getInstance();
 
+        Log.v("ayc-scraper", "contacting: " + urlString);
+
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -202,7 +225,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
             urlConnection.addRequestProperty("Cookie", ayccm.getCookieValue());
 
             urlConnection.setRequestProperty("Host", "ashtangayoga.ie");
-            urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            urlConnection.setRequestProperty("User-Agent", "ayc-android/1.0");
             urlConnection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
             urlConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
             urlConnection.setRequestProperty("Connection", "keep-alive");
@@ -255,10 +278,13 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
             JSONObject reader = new JSONObject(output);
 
             Object obj = reader.get("result");
-            if(obj instanceof Boolean) {
+            if (obj instanceof Boolean) {
                 this.object_notify(UpdateSource.logout);
                 return;
             }
+
+            UpdateResponse ur = new UpdateResponse();
+            ur.response = reader;
 
             switch (reader.getString("action")) {
                 case "get_bookings":
@@ -285,48 +311,47 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
                     used_credit = reader.getJSONArray("result");
                     this.object_notify(UpdateSource.profile);
                     break;
-                case "add_booking":
-                    add_booking = reader.getJSONObject("result");
-                    this.object_notify(UpdateSource.classes);
-                    break;
                 case "get_expiring_credit":
                     expiring_credit = reader.getJSONArray("result");
                     this.object_notify(UpdateSource.profile);
                     break;
-                case "get_page":
-                    JSONArray js = reader.getJSONArray("result");
-                    String pname = js.get(0).toString();
-                    switch(pname){
-                        case "Welcome":
-                            page_welcome = java.net.URLDecoder.decode(js.get(1).toString(),"UTF-8");
-                            break;
-                    }
-
-                    break;
+                case "add_booking":
+                case "cancel_booking":
+                case "redeem_code":
+                case "begin_monthly":
+                    this.object_notify(UpdateSource.classes, ur);
+                    return;
             }
-            this.notify_all();
         } catch (Exception e) {
-            Log.v("ayc-error", e.getStackTrace().toString());
+            Log.v("ayc-error", e.getMessage());
         }
     }
 
     @Override
     public void attach(Observer obj) {
-        if(observers.contains(obj)==false){
-            observers.add(obj);
+        if (ScraperManager.observers.contains(obj) == false) {
+            Log.v("ayc-scraper-attach", obj.toString());
+            ScraperManager.observers.add(obj);
         }
     }
 
     @Override
     public void detach(Observer obj) {
-        if(observers.contains(obj)){
-            observers.remove(obj);
+        ScraperManager.observers.remove(obj);
+    }
+
+    @Override
+    public void object_notify(UpdateSource updatesource, UpdateResponse ur) {
+        Log.v("ayc-scraper-update", "update all: " + observers.size());
+        for (Observer obj : ScraperManager.observers) {
+            Log.v("ayc-scraper-update", obj.toString());
+            obj.update(updatesource, ur);
         }
     }
 
     @Override
     public void object_notify(UpdateSource updatesource) {
-        for (Observer obj: observers) {
+        for (Observer obj : ScraperManager.observers) {
             obj.update(updatesource);
         }
     }
@@ -334,7 +359,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     @Override
     public void notify_all() {
         for (UpdateSource source : UpdateSource.values()) {
-            if(source == UpdateSource.logout) continue;
+            if (source == UpdateSource.logout) continue;
             this.object_notify(source);
         }
     }

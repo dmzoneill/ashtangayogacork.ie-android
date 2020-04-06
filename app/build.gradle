@@ -8,7 +8,7 @@ android {
         applicationId "ie.ayc"
         minSdkVersion 18
         targetSdkVersion 29
-        versionCode 22
+        versionCode 31
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

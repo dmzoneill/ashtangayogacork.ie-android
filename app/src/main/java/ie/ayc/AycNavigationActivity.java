@@ -55,4 +55,9 @@ public class AycNavigationActivity extends AppCompatActivity implements Observer
             Log.v("ayc-aycnav", e.getMessage());
         }
     }
+
+    @Override
+    public void update(UpdateSource updatesource, UpdateResponse ur) {
+        Log.v("ayc-classes", "update response");
+    }
 }

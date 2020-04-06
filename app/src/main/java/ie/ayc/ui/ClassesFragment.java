@@ -3,6 +3,7 @@ package ie.ayc.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -13,6 +14,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -38,7 +42,7 @@ import ie.ayc.Common;
 import ie.ayc.Observer;
 import ie.ayc.R;
 import ie.ayc.ScraperManager;
-import ie.ayc.ScraperManagerScheduler;
+import ie.ayc.UpdateResponse;
 import ie.ayc.UpdateSource;
 
 public class ClassesFragment extends Fragment implements Observer {
@@ -55,6 +59,13 @@ public class ClassesFragment extends Fragment implements Observer {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_classes, container, false);
+
+        RotateAnimation rotate = new RotateAnimation(0, 359, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(3000);
+        rotate.setInterpolator(new LinearInterpolator());
+
+        ImageView image = this.root.findViewById(R.id.ayclogoprogress);
+        image.startAnimation(rotate);
 
         int[] headers = new int[4];
         headers[0] = R.id.available_class_credits;
@@ -84,7 +95,24 @@ public class ClassesFragment extends Fragment implements Observer {
             Log.v("ayc-classes", e.getMessage());
         }
 
-        this.setupRedeemButton();
+
+        final Button redeem_code_button = this.root.findViewById(R.id.button_redeem);
+
+        redeem_code_button.setOnClickListener(new View.OnClickListener() {
+            //@SuppressWarnings("deprecation")
+            public void onClick(final View view) {
+                ClassesFragment.this.showRedeemDialog("");
+            }
+        });
+
+        final Button start_monthly_button = this.root.findViewById(R.id.button_start_monthly);
+
+        start_monthly_button.setOnClickListener(new View.OnClickListener() {
+            //@SuppressWarnings("deprecation")
+            public void onClick(final View view) {
+                ClassesFragment.this.showStartMonthlyDialog();
+            }
+        });
 
         ScraperManager sm = ScraperManager.getInstance();
         sm.attach(this);
@@ -93,68 +121,129 @@ public class ClassesFragment extends Fragment implements Observer {
         return root;
     }
 
-    private void setupRedeemButton() {
-        final Button redeem_button = this.root.findViewById(R.id.button_redeem);
+    private void showRedeemDialog(String error) {
+        // Creating alert Dialog with one Button
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ClassesFragment.this.root.getContext());
 
-        redeem_button.setOnClickListener(new View.OnClickListener() {
-            //@SuppressWarnings("deprecation")
-            public void onClick(final View view) {
+        // Setting Dialog Title
+        alertDialog.setTitle("Redeem Code");
 
-                // Creating alert Dialog with one Button
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ClassesFragment.this.root.getContext());
+        FrameLayout container = new FrameLayout(getActivity().getApplicationContext());
+        LinearLayout ll = new LinearLayout(getActivity().getApplicationContext());
+        ll.setOrientation(LinearLayout.VERTICAL);
+        ll.setGravity(Gravity.CENTER_HORIZONTAL);
 
-                // Setting Dialog Title
-                alertDialog.setTitle("Redeem Code");
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
 
-                FrameLayout container = new FrameLayout(getActivity().getApplicationContext());
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
-                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        // Setting Dialog Message
+        alertDialog.setMessage("Enter code");
+        final EditText input = new EditText(ClassesFragment.this.root.getContext());
+        input.setLayoutParams(params);
+        input.setBackgroundResource(R.drawable.login_input);
+        input.setHint("CODE");
+        input.setGravity(Gravity.CENTER_HORIZONTAL);
+        ll.addView(input);
 
-                // Setting Dialog Message
-                alertDialog.setMessage("Enter code");
-                final EditText input = new EditText(ClassesFragment.this.root.getContext());
-                input.setLayoutParams(params);
-                input.setBackgroundResource(R.drawable.login_input);
-                input.setHint("CODE");
-                input.setGravity(Gravity.CENTER);
-                container.addView(input);
-                alertDialog.setView(container);
+        if (error.compareTo("") != 0) {
+            TextView tv = new TextView(ClassesFragment.this.root.getContext());
+            tv.setText(error);
+            tv.setTextColor(Color.RED);
+            tv.setTypeface(null, Typeface.BOLD);
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            LinearLayout.LayoutParams pms = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            pms.setMargins(10, 10, 10, 10);
+            tv.setLayoutParams(pms);
+            ll.addView(tv);
+        }
 
-                // Setting Icon to Dialog
-                alertDialog.setIcon(R.drawable.sticker_ganesh);
+        container.addView(ll);
+        alertDialog.setView(container);
 
-                // Setting Positive "Yes" Button
-                alertDialog.setPositiveButton("Redeem",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Write your code here to execute after dialog
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.sticker_ganesh);
 
-                            }
-                        });
-                // Setting Negative "NO" Button
-                alertDialog.setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Write your code here to execute after dialog
-                                dialog.cancel();
-                            }
-                        });
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton("Redeem",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ScraperManager sm = ScraperManager.getInstance();
+                        sm.apply_redeem_code(input.getText().toString());
+                        dialog.dismiss();
+                    }
+                });
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
 
-                // Showing Alert Message
-                alertDialog.show();
-            }
-        });
+        // Showing Alert Message
+        alertDialog.show();
+    }
 
-        final Button refresh = this.root.findViewById(R.id.button_refresh);
+    private void showStartMonthlyDialog() {
+        // Creating alert Dialog with one Button
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ClassesFragment.this.root.getContext());
 
-        refresh.setOnClickListener(new View.OnClickListener() {
-            //@SuppressWarnings("deprecation")
-            public void onClick(final View view) {
-                Log.v("ayc-classes", " clicked");
-                ScraperManagerScheduler.schedule_task(getContext());
-            }
-        });
+        // Setting Dialog Title
+        alertDialog.setTitle("Start Monthly Warning");
+
+        FrameLayout container = new FrameLayout(getActivity().getApplicationContext());
+        LinearLayout ll = new LinearLayout(getActivity().getApplicationContext());
+        ll.setOrientation(LinearLayout.VERTICAL);
+        ll.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+
+        String[] msgs = {
+                "You are about to start your monthly",
+                "Please check your expiring credit prior to starting your monthly in case you have available credits expiring within the month.",
+                "Are you sure you want to start your monthly?"
+        };
+
+        for (String msg : msgs) {
+            TextView tv = new TextView(ClassesFragment.this.root.getContext());
+            tv.setText(msg);
+            //tv.setTextColor(Color.RED);
+            //tv.setTypeface(null, Typeface.BOLD);
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            LinearLayout.LayoutParams pms = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            pms.setMargins(10, 10, 10, 10);
+            tv.setLayoutParams(pms);
+            ll.addView(tv);
+        }
+
+        container.addView(ll);
+        alertDialog.setView(container);
+
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.sticker_ganesh);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton("Start",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ScraperManager sm = ScraperManager.getInstance();
+                        sm.begin_monthly();
+                        dialog.dismiss();
+                    }
+                });
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
     private void updateClasses() {
@@ -224,13 +313,23 @@ public class ClassesFragment extends Fragment implements Observer {
                 btbk.setTag(classs.get("class_id").toString());
                 this.book_buttons.put(classs.get("class_id").toString(), btbk);
 
-                btbk.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.v("ayc-class-book", "clicked");
-                        ClassesFragment.this.book_button_click(btbk);
-                    }
-                });
+                if (classs.get("book_button_action").toString().compareTo("ButtonCancel") != 0) {
+                    btbk.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.v("ayc-class-book", "clicked");
+                            ClassesFragment.this.book_button_click(btbk);
+                        }
+                    });
+                } else {
+                    btbk.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.v("ayc-class-book", "clicked");
+                            ClassesFragment.this.cancel_class(btbk.getTag().toString());
+                        }
+                    });
+                }
 
                 if (classs.get("button_text").toString().compareTo("Cancelled") != 0 && Integer.parseInt(classs.get("max_attendees").toString()) == 0) {
                     btbk.setVisibility(View.GONE);
@@ -266,11 +365,11 @@ public class ClassesFragment extends Fragment implements Observer {
             }
 
             if (aycclass.get("cancellation_warning").toString().compareTo("true") == 0) {
-                this.book_button_confirm("Confirm booking", "This booking cannot be cancelled", class_id);
-                //warn can't be cancelled
+                this.book_button_confirm("Confirm booking", "\nThis booking cannot be cancelled", class_id);
+                return;
             }
 
-
+            this.book_class(class_id);
         } catch (Exception e) {
             Log.v("ayc-classes", e.getMessage());
         }
@@ -281,22 +380,19 @@ public class ClassesFragment extends Fragment implements Observer {
 
         builder.setTitle(title);
         builder.setMessage(message);
+        builder.setIcon(R.drawable.sticker_ganesh);
 
-        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-
+        builder.setPositiveButton("Book", new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int which) {
-                // Do nothing but close the dialog
                 ClassesFragment.this.book_class(class_id);
                 dialog.dismiss();
             }
         });
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                // Do nothing
                 dialog.dismiss();
             }
         });
@@ -307,6 +403,21 @@ public class ClassesFragment extends Fragment implements Observer {
 
     private void book_class(String class_id) {
         Log.v("ayc-classes", class_id);
+        FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
+        progressOverlay.setVisibility(View.VISIBLE);
+
+        ScraperManager sm = ScraperManager.getInstance();
+        sm.book_class_add(class_id);
+
+    }
+
+    private void cancel_class(String class_id) {
+        Log.v("ayc-classes", class_id);
+        FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
+        progressOverlay.setVisibility(View.VISIBLE);
+
+        ScraperManager sm = ScraperManager.getInstance();
+        sm.book_class_remove(class_id);
     }
 
     private void updateCredits() {
@@ -333,7 +444,17 @@ public class ClassesFragment extends Fragment implements Observer {
                     TextView credit_amount = (TextView) credit_type_row.getChildAt(0);
                     TextView credit_type = (TextView) credit_type_row.getChildAt(1);
                     credit_amount.setText(types.getString(str));
-                    credit_type.setText(str);
+                    switch(str) {
+                        case "availableStandardCredits":
+                            credit_type.setText("standard credits");
+                            break;
+                        case "availableMonthliesCredits":
+                            credit_type.setText("monthlies");
+                            break;
+                        default:
+                            credit_type.setText(str);
+                            break;
+                    }
                     ll.addView(credit_type_row);
                 } catch (Exception e) {
 
@@ -388,6 +509,50 @@ public class ClassesFragment extends Fragment implements Observer {
             this.updateClasses();
             this.updateCredits();
             this.updateBookings();
+
+            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
+            progressOverlay.setVisibility(View.INVISIBLE);
+        } catch (Exception e) {
+            Log.v("ayc-classes", e.getMessage());
+        }
+    }
+
+    @Override
+    public void update(UpdateSource updatesource, UpdateResponse ur) {
+        Log.v("ayc-classes", "update response");
+
+        try {
+            if (updatesource != UpdateSource.classes) return;
+
+            String action = ur.response.getString("action");
+            String error = ur.response.getString("error");
+            String result = ur.response.getString("result");
+
+            Log.v("ayc-classes", "action: " + action);
+            Log.v("ayc-classes", "error: " + error);
+            Log.v("ayc-classes", "result: " + result);
+
+            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
+            ScraperManager sm = ScraperManager.getInstance();
+
+            switch (action) {
+                case "redeem_code":
+                    if (error.compareTo("") != 0) {
+                        this.showRedeemDialog(error);
+                    } else {
+                        sm.fetch_all();
+                    }
+                    break;
+                case "begin_monthly":
+                default:
+                    if (error.compareTo("") != 0) {
+                        Common.alert(getActivity().getApplicationContext(), ur.response.getString("error"));
+                        progressOverlay.setVisibility(View.INVISIBLE);
+                    } else {
+                        sm.fetch_all();
+                    }
+                    break;
+            }
         } catch (Exception e) {
             Log.v("ayc-classes", e.getMessage());
         }
