@@ -1,10 +1,9 @@
 package ie.ayc;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,24 +16,15 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class ReceiptActivity extends AppCompatActivity {
 
     String id = "";
+    String url = "";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_receipt);
-
-        Intent intent = getIntent();
-        this.id = intent.getStringExtra("transid");
-        String url = "https://ashtangayoga.ie/receipt/?id=" + this.id;
-
-        setTitle("Downloading Receipt " + this.id);
-
-        Log.v("ayc-receipt", url);
-
-        final WebView wv = findViewById(R.id.receiptwebview);
+    private void downloadReceipt() {
+        final WebView wv = this.findViewById(R.id.receiptwebview);
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setSaveFormData(true);
         wv.getSettings().setAppCacheEnabled(true);
@@ -58,12 +48,16 @@ public class ReceiptActivity extends AppCompatActivity {
                 Log.v("ayc-receipt", uri.toString());
                 String cookies = AycCookieManager.getInstance().getCookieValue();
                 String[] cookiesList = cookies.split(";");
-                for(String cookie : cookiesList){
+                for (String cookie : cookiesList) {
                     CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
                 }
                 Log.v("ayc-receipt", "set cookies");
                 CookieSyncManager.getInstance().sync();
-                view.loadUrl(uri.toString());
+                if (uri.toString().contains("profile")) {
+                    view.loadUrl(ReceiptActivity.this.url);
+                } else {
+                    view.loadUrl(uri.toString());
+                }
                 return false;
             }
         };
@@ -78,12 +72,12 @@ public class ReceiptActivity extends AppCompatActivity {
         wv.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                //startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
                 request.addRequestHeader("cookie", AycCookieManager.getInstance().getCookieValue());
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Ayc-Receipt-" + ReceiptActivity.this.id +".pdf");
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Ayc-Receipt-" + ReceiptActivity.this.id + ".pdf");
                 DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                 dm.enqueue(request);
                 Common.alert(getApplicationContext(), "Downloading Receipt");
@@ -91,7 +85,40 @@ public class ReceiptActivity extends AppCompatActivity {
             }
         });
 
-        Log.v("ayc-receipt", url);
+        Log.v("ayc-receipt", this.url);
         wv.loadUrl(url);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_receipt);
+
+        Intent intent = getIntent();
+        this.id = intent.getStringExtra("transid");
+        this.url = "https://ashtangayoga.ie/receipt/?id=" + this.id;
+
+        setTitle("Downloading Receipt " + this.id);
+
+        Log.v("ayc-receipt", this.url);
+
+        if (PermissionCheck.readAndWriteExternalStorage(this) == false) {
+            return;
+        } else {
+            this.downloadReceipt();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.v("ayc-receipt", "onRequestPermissionsResult");
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v("ayc-receipt", "granted");
+            this.downloadReceipt();
+        } else {
+            Common.alert(this, "Permission to save no granted");
+            this.finish();
+        }
     }
 }
