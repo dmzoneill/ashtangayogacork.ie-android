@@ -1,6 +1,7 @@
 package ie.ayc.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -26,10 +27,13 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import ie.ayc.AycCookieManager;
+import ie.ayc.AycNavigationActivity;
 import ie.ayc.Common;
 import ie.ayc.DownloadImageTask;
+import ie.ayc.Login;
 import ie.ayc.Observer;
 import ie.ayc.R;
+import ie.ayc.ReceiptActivity;
 import ie.ayc.ScraperManager;
 import ie.ayc.UpdateResponse;
 import ie.ayc.UpdateSource;
@@ -280,6 +284,7 @@ public class ProfileFragment extends Fragment implements Observer {
                 ImageView ivreceipt = (ImageView) trans_row.getChildAt(3);
                 ImageView ivgift = (ImageView) trans_row.getChildAt(4);
 
+                final String tid = java.net.URLDecoder.decode(obj.getString("id"), "UTF-8");
                 String name = java.net.URLDecoder.decode(obj.getString("payer_email"), "UTF-8");
                 String first_name = java.net.URLDecoder.decode(obj.getString("first_name"), "UTF-8");
                 String last_name = java.net.URLDecoder.decode(obj.getString("last_name"), "UTF-8");
@@ -305,6 +310,16 @@ public class ProfileFragment extends Fragment implements Observer {
                 if(obj.getString("class_type_restriction").compareToIgnoreCase("null")==0) {
                     tvtype.setText(purchase_amount + "\nstandard");
                 }
+
+                ivreceipt.setClickable(true);
+                ivreceipt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v){
+                        Intent myIntent = new Intent(ProfileFragment.this.getActivity(), ReceiptActivity.class);
+                        myIntent.putExtra("transid", tid); //Optional parameters
+                        ProfileFragment.this.startActivity(myIntent);
+                    }
+                });
 
                 ll.addView(trans_row);
             }
