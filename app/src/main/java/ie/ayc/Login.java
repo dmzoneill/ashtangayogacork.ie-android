@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +37,12 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        ProgressBar pgsBar = findViewById(R.id.pBar);
+        pgsBar.setVisibility(View.VISIBLE);
+
+        LinearLayout login_form = findViewById(R.id.login_form);
+        login_form.setVisibility(View.GONE);
 
         final EditText editname = this.findViewById(R.id.edittext_username);
         editname.setOnFocusChangeListener( new View.OnFocusChangeListener() {
@@ -129,7 +137,6 @@ public class Login extends AppCompatActivity implements AsyncResponse {
         mgr.fetch_all();
 
         Intent myIntent = new Intent(Login.this, AycNavigationActivity.class);
-        //myIntent.putExtra("key", value); //Optional parameters
         Login.this.startActivity(myIntent);
     }
 
@@ -137,12 +144,18 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     public void processFinish(String output) {
         Log.v("ayc-delegate", output);
         Log.v("ayc-delegate-stage", String.valueOf(stage));
+
+        ProgressBar pgsBar = findViewById(R.id.pBar);
+        LinearLayout login_form = findViewById(R.id.login_form);
+
         try {
             JSONObject reader = new JSONObject(output);
             if (stage == 0) {
                 if (reader.getString("result").compareToIgnoreCase("false") == 0) {
                     Log.v("ayc-delegate-button", "enabled");
                     AycCookieManager.getInstance().clearCookies();
+                    pgsBar.setVisibility(View.GONE);
+                    login_form.setVisibility(View.VISIBLE);
                     this.enableLoginButton();
                 } else {
                     Log.v("ayc-delegate-button", "login success send intent");
@@ -150,12 +163,16 @@ public class Login extends AppCompatActivity implements AsyncResponse {
                 }
             } else if (stage == 1) {
                 stage = 2;
+                pgsBar.setVisibility(View.VISIBLE);
+                login_form.setVisibility(View.GONE);
                 Log.v("ayc-delegate-button", "click, check login");
                 this.check_logged_in();
             } else if (stage == 2) {
                 if (reader.getString("result").compareToIgnoreCase("false") == 0) {
                     Log.v("ayc-delegate", "login failed confirmed");
                     AycCookieManager.getInstance().clearCookies();
+                    pgsBar.setVisibility(View.GONE);
+                    login_form.setVisibility(View.VISIBLE);
                 } else {
                     Log.v("ayc-delegate-button", "login success send intent");
                     this.loginProcessed();

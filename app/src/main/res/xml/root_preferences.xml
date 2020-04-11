@@ -1,0 +1,34 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/profile">
+
+        <EditTextPreference
+            app:key="gravatar"
+            app:title="@string/gravatar"
+            app:summary="Set your profile image on gravatar.com"
+            app:enabled="false"/>
+
+        <EditTextPreference
+            app:key="phoneno"
+            app:title="@string/phoneno"
+            app:summary="Only used for late cancellations"
+            android:inputType="number" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/notifications">
+
+        <SwitchPreferenceCompat
+            app:key="email"
+            app:summary="Enable or disable email notifications"
+            app:title="@string/notifications_email" />
+
+        <SwitchPreferenceCompat
+            app:key="sms"
+            app:summary="Enable or disable sms notifications"
+            app:title="@string/notifications_sms" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

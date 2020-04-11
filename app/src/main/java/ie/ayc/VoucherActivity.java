@@ -18,12 +18,11 @@ import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ReceiptActivity extends AppCompatActivity {
+public class VoucherActivity extends AppCompatActivity {
 
-    String id = "";
     String url = "";
 
-    private void downloadReceipt() {
+    private void downloadVoucher() {
         final WebView wv = this.findViewById(R.id.receiptwebview);
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setSaveFormData(true);
@@ -45,16 +44,16 @@ public class ReceiptActivity extends AppCompatActivity {
             }
 
             private boolean handleUri(WebView view, final Uri uri) {
-                Log.v("ayc-receipt", uri.toString());
+                Log.v("ayc-voucher", uri.toString());
                 String cookies = AycCookieManager.getInstance().getCookieValue();
                 String[] cookiesList = cookies.split(";");
                 for (String cookie : cookiesList) {
                     CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
                 }
-                Log.v("ayc-receipt", "set cookies");
+                Log.v("ayc-voucher", "set cookies");
                 CookieSyncManager.getInstance().sync();
                 if (uri.toString().contains("profile")) {
-                    view.loadUrl(ReceiptActivity.this.url);
+                    view.loadUrl(VoucherActivity.this.url);
                 } else {
                     view.loadUrl(uri.toString());
                 }
@@ -77,15 +76,15 @@ public class ReceiptActivity extends AppCompatActivity {
                 request.addRequestHeader("cookie", AycCookieManager.getInstance().getCookieValue());
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Ayc-Receipt-" + ReceiptActivity.this.id + ".pdf");
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "ayc-voucher.png");
                 DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                 dm.enqueue(request);
-                Common.alert(getApplicationContext(), "Downloading Receipt");
-                ReceiptActivity.this.finish();
+                VoucherActivity.this.finish();
             }
         });
 
         Log.v("ayc-receipt", this.url);
+        wv.getSettings().setUserAgentString("ayc-android/1.0");
         wv.loadUrl(url);
     }
 
@@ -95,17 +94,15 @@ public class ReceiptActivity extends AppCompatActivity {
         setContentView(R.layout.activity_receipt);
 
         Intent intent = getIntent();
-        this.id = intent.getStringExtra("transid");
-        this.url = "https://ashtangayoga.ie/receipt/?id=" + this.id;
+        this.url = intent.getStringExtra("url");
+        setTitle("Downloading Voucher");
 
-        setTitle("Downloading Receipt " + this.id);
-
-        Log.v("ayc-receipt", this.url);
+        Log.v("ayc-voucher", this.url);
 
         if (PermissionCheck.readAndWriteExternalStorage(this) == false) {
             return;
         } else {
-            this.downloadReceipt();
+            this.downloadVoucher();
         }
     }
 
@@ -115,7 +112,7 @@ public class ReceiptActivity extends AppCompatActivity {
         Log.v("ayc-receipt", "onRequestPermissionsResult");
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.v("ayc-receipt", "granted");
-            this.downloadReceipt();
+            this.downloadVoucher();
         } else {
             Common.alert(this, "Permission to save not granted");
             this.finish();

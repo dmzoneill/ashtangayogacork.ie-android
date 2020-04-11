@@ -1,6 +1,7 @@
 package ie.ayc.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,16 +10,22 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import org.json.JSONArray;
@@ -27,16 +34,16 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import ie.ayc.AycCookieManager;
-import ie.ayc.AycNavigationActivity;
 import ie.ayc.Common;
 import ie.ayc.DownloadImageTask;
-import ie.ayc.Login;
 import ie.ayc.Observer;
 import ie.ayc.R;
 import ie.ayc.ReceiptActivity;
 import ie.ayc.ScraperManager;
+import ie.ayc.SettingsActivity;
 import ie.ayc.UpdateResponse;
 import ie.ayc.UpdateSource;
+import ie.ayc.VoucherActivity;
 
 public class ProfileFragment extends Fragment implements Observer {
 
@@ -53,6 +60,9 @@ public class ProfileFragment extends Fragment implements Observer {
         this.root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         try {
+            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
+            progressOverlay.setVisibility(View.VISIBLE);
+
             int[] headers = new int[4];
             headers[0] = R.id.my_bookings;
             headers[1] = R.id.expiring_credit;
@@ -80,7 +90,9 @@ public class ProfileFragment extends Fragment implements Observer {
             imp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Common.alert(getContext(), "Not available");
+                    Intent myIntent = new Intent(ProfileFragment.this.getActivity(), SettingsActivity.class);
+                    //myIntent.putExtra("url", result); //Optional parameters
+                    ProfileFragment.this.startActivity(myIntent);
                 }
             });
         }
@@ -95,7 +107,7 @@ public class ProfileFragment extends Fragment implements Observer {
         return root;
     }
 
-    private void upateImageView() {
+    private void updateImageView() {
         ImageView profileview = root.findViewById(R.id.person);
         DownloadImageTask dit = new DownloadImageTask(profileview);
         try {
@@ -212,6 +224,58 @@ public class ProfileFragment extends Fragment implements Observer {
         }
     }
 
+    private void showVoucherDialog(final String transid) {
+        // Creating alert Dialog with one Button
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ProfileFragment.this.root.getContext());
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Create gift voucher");
+
+        FrameLayout container = new FrameLayout(getActivity().getApplicationContext());
+        LinearLayout ll = new LinearLayout(getActivity().getApplicationContext());
+        ll.setOrientation(LinearLayout.VERTICAL);
+        ll.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Enter recipient name:");
+        final EditText input = new EditText(ProfileFragment.this.root.getContext());
+        input.setLayoutParams(params);
+        input.setBackgroundResource(R.drawable.login_input);
+        input.setHint("John Doe");
+        input.setGravity(Gravity.CENTER_HORIZONTAL);
+        ll.addView(input);
+
+        container.addView(ll);
+        alertDialog.setView(container);
+
+        // Setting Icon to Dialog
+        alertDialog.setIcon(R.drawable.sticker_ganesh);
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton("Gift",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ScraperManager sm = ScraperManager.getInstance();
+                        sm.get_voucher_url(input.getText().toString(), transid);
+                        dialog.dismiss();
+                    }
+                });
+        // Setting Negative "NO" Button
+        alertDialog.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
     private void updateUsedCredit() {
         try {
             JSONArray used = ScraperManager.getUsedCredit();
@@ -304,9 +368,17 @@ public class ProfileFragment extends Fragment implements Observer {
                 tvtype.setText(obj.getString("class_type_restriction"));
 
                 if(Integer.parseInt(obj.getString("used_tokens")) != 0) {
-                    ivgift.setVisibility(View.GONE);
+                    ivgift.setVisibility(View.INVISIBLE);
                 }
-
+                else {
+                    ivgift.setClickable(true);
+                    ivgift.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ProfileFragment.this.showVoucherDialog(tid);
+                        }
+                    });
+                }
                 if(obj.getString("class_type_restriction").compareToIgnoreCase("null")==0) {
                     tvtype.setText(purchase_amount + "\nstandard");
                 }
@@ -315,6 +387,8 @@ public class ProfileFragment extends Fragment implements Observer {
                 ivreceipt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
+                        Common.alert(getContext(), "Loading receipt...");
+                        v.startAnimation(AnimationUtils.loadAnimation(ProfileFragment.this.getContext(), R.anim.image_click));
                         Intent myIntent = new Intent(ProfileFragment.this.getActivity(), ReceiptActivity.class);
                         myIntent.putExtra("transid", tid); //Optional parameters
                         ProfileFragment.this.startActivity(myIntent);
@@ -333,12 +407,15 @@ public class ProfileFragment extends Fragment implements Observer {
     public void update(UpdateSource updatesource) {
         if(updatesource != UpdateSource.profile) return;
         try {
-            //this.upateImageView();
+            this.updateImageView();
             this.updateTransactions();
             this.updateExpiringCredit();
             this.updateUsedCredit();
             this.updateBookings();
             this.updateUsername();
+
+            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
+            progressOverlay.setVisibility(View.INVISIBLE);
         }
         catch (Exception e){
             Log.v("ayc-classes-update", e.getMessage());
@@ -347,13 +424,32 @@ public class ProfileFragment extends Fragment implements Observer {
 
     @Override
     public void update(UpdateSource updatesource, UpdateResponse ur) {
-        Log.v("ayc-classes", "update response");
+        Log.v("ayc-profile", "update response");
 
         try {
-            if (updatesource != UpdateSource.classes) return;
+            if (updatesource != UpdateSource.profile) return;
 
-            if(ur.response.has("success")) {
-                Common.alert(this.getContext(), "class booked");
+            String action = ur.response.getString("action");
+            String error = ur.response.getString("error");
+            String result = ur.response.getString("result");
+
+            Log.v("ayc-profile", "action: " + action);
+            Log.v("ayc-profile", "error: " + error);
+            Log.v("ayc-profile", "result: " + result);
+
+            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
+            ScraperManager sm = ScraperManager.getInstance();
+
+            switch (action) {
+                case "get_voucher":
+                    if (error.compareTo("") != 0) {
+                        Common.alert(getContext(), error);
+                    } else {
+                        Intent myIntent = new Intent(ProfileFragment.this.getActivity(), VoucherActivity.class);
+                        myIntent.putExtra("url", result); //Optional parameters
+                        ProfileFragment.this.startActivity(myIntent);
+                    }
+                    break;
             }
         } catch (Exception e) {
             Log.v("ayc-classes", e.getMessage());

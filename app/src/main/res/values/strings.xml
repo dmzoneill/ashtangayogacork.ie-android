@@ -33,4 +33,13 @@
     <string name="title_prices">Prices</string>
     <string name="title_profile">Profile</string>
     <string name="title_classes">Classes</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Sync Preferences -->
+    <string name="gravatar">Your gravatar</string>
+    <string name="profile">Profile</string>
+    <string name="phoneno">Telephone number</string>
+    <string name="notifications">Notifications</string>
+    <string name="notifications_email">Email</string>
+    <string name="notifications_sms">SMS</string>
 </resources>

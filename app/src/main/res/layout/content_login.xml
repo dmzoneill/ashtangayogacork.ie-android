@@ -29,57 +29,69 @@
             android:layout_marginBottom="30dp"
             android:src="@drawable/login_logo" />
 
-        <TextView
-            android:id="@+id/textView2"
+        <LinearLayout
+            android:id="@+id/login_form"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="Username or Email Address" />
+            android:layout_centerVertical="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/edittext_username"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:layout_marginBottom="15dp"
-            android:padding="10dp"
-            android:background="@drawable/login_input"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:text="Name" />
 
-        <TextView
-            android:id="@+id/textView3"
+            <EditText
+                android:id="@+id/edittext_username"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:padding="10dp"
+                android:background="@drawable/login_input"
+                android:layout_width="270dp"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:hint="Enter username..." />
+
+            <EditText
+                android:id="@+id/edittext_password"
+                android:layout_width="270dp"
+                android:layout_height="50dp"
+                android:ems="10"
+                android:padding="10dp"
+                android:gravity="center"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/login_input"
+                android:inputType="textPassword"
+                android:hint="Enter password..."/>
+
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/login_button"
+                android:textColor="@android:color/white"
+                android:text="Login" />
+
+            <ImageButton
+                android:id="@+id/login_button_facebook"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                android:layout_width="220dp"
+                android:layout_height="40dp"
+                android:background="@drawable/fb"/>
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/pBar"
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="Password" />
-
-        <EditText
-            android:id="@+id/edittext_password"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:ems="10"
-            android:padding="10dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/login_input"
-            android:inputType="textPassword" />
-
-        <Button
-            android:id="@+id/login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/login_button"
-            android:textColor="@android:color/white"
-            android:text="Login" />
-
-        <ImageButton
-            android:id="@+id/login_button_facebook"
-            android:scaleType="fitXY"
-            android:visibility="gone"
-            android:layout_width="220dp"
-            android:layout_height="40dp"
-            android:background="@drawable/fb"/>
+            android:layout_height="wrap_content">
+        </ProgressBar>
 
         <LinearLayout
             android:layout_marginTop="20dp"

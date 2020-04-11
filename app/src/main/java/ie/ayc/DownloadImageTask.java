@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
-    String blank = "";
+    static Bitmap image = null;
     String imgurl = "";
 
     public DownloadImageTask(ImageView bmImage) {
@@ -24,6 +25,10 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected Bitmap doInBackground(String... urls) {
+        if( DownloadImageTask.image != null) {
+            return DownloadImageTask.image;
+        }
+
         String urldisplay = urls[0];
         Log.v("ayc-download", urldisplay);
         Bitmap mIcon11 = null;
@@ -37,26 +42,17 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
             Bitmap myBitmap = BitmapFactory.decodeStream(input);
             connection.disconnect();
             input.close();
-
-            byte[] b = new byte[10];
-            input.read(b, 0, 10);
-            blank = String.valueOf(Arrays.hashCode(b));
             mIcon11 = myBitmap;
             Log.v("ayc-image-loader","loaded");
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
         }
-        return mIcon11;
+        DownloadImageTask.image = mIcon11;
+        return DownloadImageTask.image;
     }
 
     protected void onPostExecute(Bitmap g) {
-        Log.v("ayc-download", "here");
-        if (blank.compareTo("1917157348") == 0) {
-            return;
-        }
-
+        Log.v("ayc-download", "got gravatar");
         bmImage.setImageBitmap(g);
-        //bmImage.setImageURI(Uri.parse(this.imgurl));
-        Log.v("ayc-download", "there");
     }
 }

@@ -18,7 +18,6 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
 
     private static ArrayList<Observer> observers;
     private static ScraperManager instance;
-    private static String page_welcome;
     private static JSONArray profile;
     private static JSONArray classes;
     private static JSONArray prices;
@@ -190,6 +189,20 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         remove_class.execute("https://ashtangayoga.ie/json/?a=cancel_booking&id=actionButton" + class_id);
     }
 
+    public void get_voucher_url(String name, String transid) {
+        Log.v("ayc-scraper-update", "make voucher: " + observers.size());
+        ScraperManager get_voucher = new ScraperManager();
+        get_voucher.delegate = this.this_async;
+        get_voucher.execute("https://ashtangayoga.ie/json/?a=get_voucher&vid=" + transid + "&vname=" + name);
+    }
+
+    public void update_user_settings(String phone, String sms, String mail) {
+        Log.v("ayc-scraper-update", "profile settings: " + observers.size());
+        ScraperManager update_settings = new ScraperManager();
+        update_settings.delegate = this.this_async;
+        update_settings.execute("https://ashtangayoga.ie/json/?a=update_settings&sphone=" + phone + "&ssms=" + sms + "&smail=" + mail);
+    }
+
     @Override
     protected void onPostExecute(String result) {
         try {
@@ -315,11 +328,20 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
                     expiring_credit = reader.getJSONArray("result");
                     this.object_notify(UpdateSource.profile);
                     break;
+                case "get_voucher":
+                    this.object_notify(UpdateSource.profile, ur);
+                    break;
                 case "add_booking":
                 case "cancel_booking":
                 case "redeem_code":
                 case "begin_monthly":
                     this.object_notify(UpdateSource.classes, ur);
+                    return;
+                case "update_settings":
+                    String json_endpoint = "https://ashtangayoga.ie/json/?a=";
+                    ScraperManager task = new ScraperManager();
+                    task.delegate = this.this_async;
+                    task.execute(json_endpoint + "get_profile");
                     return;
             }
         } catch (Exception e) {
