@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_feet"
+    android:background="@drawable/background"
     tools:context=".ui.ProfileFragment">
 
     <include layout="@layout/progress"/>
@@ -19,12 +19,15 @@
         <LinearLayout
             android:id="@+id/linear1"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <LinearLayout
                 android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -66,8 +69,9 @@
                 android:layout_marginBottom="30dp"
                 android:layout_gravity="center"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
-                android:textSize="20sp"/>
+                android:textColor="#000000"
+                android:fontFamily="@font/ubuntu_bold"
+                android:textSize="28sp"/>
 
             <TextView
                 android:id="@+id/my_bookings"
@@ -75,8 +79,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <TableLayout
@@ -101,8 +107,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <TableLayout
@@ -129,8 +137,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <TableLayout
@@ -157,8 +167,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <TableLayout

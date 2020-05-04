@@ -7,5 +7,6 @@
     tools:context=".Login">
 
     <include layout="@layout/content_login" />
+    <include layout="@layout/bugbutton"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

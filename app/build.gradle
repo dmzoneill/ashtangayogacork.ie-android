@@ -8,7 +8,7 @@ android {
         applicationId "ie.ayc"
         minSdkVersion 18
         targetSdkVersion 29
-        versionCode 36
+        versionCode 37
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -22,9 +22,16 @@ android {
     }
 }
 
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 dependencies {
     def work_version = "2.3.4"
 
+    implementation 'com.github.JediBurrell:customFloatingActionButton:-SNAPSHOT'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

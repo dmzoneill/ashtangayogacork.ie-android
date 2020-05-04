@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BugReportActivity">
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="?attr/actionBarSize">
+
+        <LinearLayout
+            android:id="@+id/linear1"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/bug_report"
+                android:text="Bug report"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:text="We're' sorry you had a problem with the app.  Thanks for taking the time to provide feedback."
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginBottom="10dp"/>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+            <TextView
+                android:text="Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:fontFamily="@font/ubuntu_bold"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
+
+            <EditText
+                android:id="@+id/issue_title"
+                android:hint="A short title"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:background="@drawable/login_input"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:text="Description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ubuntu_bold"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
+
+            <EditText
+                android:id="@+id/issue_description"
+                android:background="@drawable/login_input"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:singleLine="false"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textSize="16sp"/>
+
+            <Button
+                android:id="@+id/issue_button"
+                android:text="Submit report"
+                android:layout_width="150dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/ubuntu_bold"
+                android:textColor="#000000"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:layout_width="69dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center"
+                android:src="@drawable/sticker_ganesh" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

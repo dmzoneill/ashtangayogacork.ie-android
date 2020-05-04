@@ -2,10 +2,12 @@ package ie.ayc;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
@@ -14,6 +16,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.jediburrell.customfab.FloatingActionButton;
 
 public class PurchaseActivity extends AppCompatActivity {
 
@@ -24,6 +28,23 @@ public class PurchaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchase);
+
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
+
+        FloatingActionButton fab = findViewById(R.id.floating_action_button);
+        fab.setFabSize(FloatingActionButton.FAB_SIZE_MINI);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("ayc", "ayc fab");
+                Intent myIntent = new Intent(getApplicationContext(), BugReportActivity.class);
+                PurchaseActivity.this.startActivity(myIntent);
+            }
+        });
 
         String url = "https://www.paypal.com/cgi-bin/webscr";
         String paypalid = getIntent().getStringExtra("paypal_button_code");

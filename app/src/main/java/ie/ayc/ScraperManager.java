@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class ScraperManager extends AsyncTask<String, String, String> implements AsyncResponse, Observable {
@@ -201,6 +202,13 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         ScraperManager update_settings = new ScraperManager();
         update_settings.delegate = this.this_async;
         update_settings.execute("https://ashtangayoga.ie/json/?a=update_settings&sphone=" + phone + "&ssms=" + sms + "&smail=" + mail);
+    }
+
+    public void create_issue(String title, String description) {
+        Log.v("ayc-scraper-update", "profile settings: " + observers.size());
+        ScraperManager update_settings = new ScraperManager();
+        update_settings.delegate = this.this_async;
+        update_settings.execute("https://ashtangayoga.ie/json/?a=submit_issue&t=" + URLEncoder.encode(title) + "&d=" + URLEncoder.encode(description) + "&i=android");
     }
 
     @Override

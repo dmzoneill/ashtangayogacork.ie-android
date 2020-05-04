@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.jediburrell.customfab.FloatingActionButton;
+
 import org.json.JSONObject;
 
 import java.net.CookieHandler;
@@ -37,6 +39,12 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
 
         ProgressBar pgsBar = findViewById(R.id.pBar);
         pgsBar.setVisibility(View.VISIBLE);
@@ -66,6 +74,25 @@ public class Login extends AppCompatActivity implements AsyncResponse {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://ashtangayoga.ie/wp-login.php?action=lostpassword")));
+            }
+        });
+
+        TextView ptv = this.findViewById(R.id.privacy_policy_link);
+        ptv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://ashtangayoga.ie/privacy-policy")));
+            }
+        });
+
+        FloatingActionButton fab = findViewById(R.id.floating_action_button);
+        fab.setFabSize(FloatingActionButton.FAB_SIZE_MINI);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("ayc", "ayc fab");
+                Intent myIntent = new Intent(Login.this.getApplicationContext(), BugReportActivity.class);
+                Login.this.startActivity(myIntent);
             }
         });
 

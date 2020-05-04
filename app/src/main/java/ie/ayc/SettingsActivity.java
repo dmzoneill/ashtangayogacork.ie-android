@@ -1,10 +1,12 @@
 package ie.ayc;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+
+import com.jediburrell.customfab.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,6 +37,23 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
+
+        FloatingActionButton fab = findViewById(R.id.floating_action_button);
+        fab.setFabSize(FloatingActionButton.FAB_SIZE_MINI);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("ayc", "ayc fab");
+                Intent myIntent = new Intent(getApplicationContext(), BugReportActivity.class);
+                SettingsActivity.this.startActivity(myIntent);
+            }
+        });
     }
 
     @Override

@@ -303,7 +303,8 @@ public class ClassesFragment extends Fragment implements Observer {
                 tvi.setText(classs.get("instructor").toString());
 
                 TextView tvct = classcontainer.findViewById(R.id.class_time);
-                tvct.setText(classs.get("start_time").toString() + " - " + classs.get("end_time").toString());
+                tvct.setGravity(Gravity.CENTER);
+                tvct.setText(classs.get("start_time").toString() + "\n" + classs.get("end_time").toString());
 
                 TextView tvcn = classcontainer.findViewById(R.id.class_name);
                 tvcn.setText(classs.get("name").toString());

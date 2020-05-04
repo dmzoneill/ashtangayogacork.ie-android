@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_feet"
+    android:background="@drawable/background"
     tools:context=".ui.ClassesFragment">
 
     <include layout="@layout/progress"/>
@@ -18,7 +18,7 @@
         <LinearLayout
             android:id="@+id/linear1"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -28,8 +28,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <LinearLayout
@@ -48,6 +50,7 @@
                     android:layout_height="wrap_content"
                     android:paddingRight="10dp"
                     android:textColor="@android:color/holo_red_dark"
+                    android:textStyle="bold"
                     android:textSize="22sp"/>
 
                 <Button
@@ -94,9 +97,11 @@
                 android:text="My Bookings"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_marginBottom="20dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <LinearLayout
@@ -123,8 +128,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <TableLayout
@@ -148,8 +155,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp"
                 android:textStyle="bold"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/josefin_bold"
+                android:textColor="#000000"
                 android:textSize="20sp"/>
 
             <TableLayout

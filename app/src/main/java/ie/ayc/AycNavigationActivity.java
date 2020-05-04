@@ -1,5 +1,6 @@
 package ie.ayc;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -9,12 +10,15 @@ import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jediburrell.customfab.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import ie.ayc.ui.PricesFragment;
 
 public class AycNavigationActivity extends AppCompatActivity implements Observer {
 
@@ -35,6 +39,23 @@ public class AycNavigationActivity extends AppCompatActivity implements Observer
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
+
+        FloatingActionButton fab = findViewById(R.id.floating_action_button);
+        fab.setFabSize(FloatingActionButton.FAB_SIZE_MINI);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("ayc", "ayc fab");
+                Intent myIntent = new Intent(AycNavigationActivity.this.getApplicationContext(), BugReportActivity.class);
+                AycNavigationActivity.this.startActivity(myIntent);
+            }
+        });
     }
 
     @Override

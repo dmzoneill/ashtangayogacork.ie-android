@@ -12,14 +12,15 @@
         android:text="05:00 - 07:00"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:layout_margin="6dp"
+        android:layout_weight="3"
+        android:layout_margin="5dp"
+        android:textColor="#000000"
         android:textStyle="bold"
         android:textSize="14sp"/>
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_weight="5"
+        android:layout_weight="11"
         android:layout_width="0dp"
         android:layout_height="wrap_content" >
 
@@ -31,6 +32,7 @@
             android:layout_marginRight="6dp"
             android:layout_marginLeft="6dp"
             android:layout_marginTop="6dp"
+            android:textColor="#000000"
             android:textStyle="bold"
             android:textSize="14sp"/>
 
@@ -52,6 +54,7 @@
                 android:text="None"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:textStyle="bold"
                 android:textSize="12sp"/>
 
@@ -61,7 +64,7 @@
 
     <Button
         android:id="@+id/class_button"
-        android:layout_weight="3"
+        android:layout_weight="6"
         android:layout_margin="6dp"
         android:layout_height="wrap_content"
         android:layout_width="0dp"

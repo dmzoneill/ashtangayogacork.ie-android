@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
@@ -17,6 +18,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.jediburrell.customfab.FloatingActionButton;
 
 public class ReceiptActivity extends AppCompatActivity {
 
@@ -93,6 +96,23 @@ public class ReceiptActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receipt);
+
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
+
+        FloatingActionButton fab = findViewById(R.id.floating_action_button);
+        fab.setFabSize(FloatingActionButton.FAB_SIZE_MINI);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("ayc", "ayc fab");
+                Intent myIntent = new Intent(getApplicationContext(), BugReportActivity.class);
+                ReceiptActivity.this.startActivity(myIntent);
+            }
+        });
 
         Intent intent = getIntent();
         this.id = intent.getStringExtra("transid");

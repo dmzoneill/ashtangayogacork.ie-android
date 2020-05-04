@@ -13,9 +13,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".BugReportActivity"></activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
         <activity android:name=".ReceiptActivity" />
         <activity android:name=".VoucherActivity" />
         <activity android:name=".SocialLoginManager" />
