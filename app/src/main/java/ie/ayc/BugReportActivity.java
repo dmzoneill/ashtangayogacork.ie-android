@@ -13,12 +13,17 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ie.ayc.ui.ClassesFragment;
+
 public class BugReportActivity extends AppCompatActivity {
+    private Animation scale;
 
     public static Spannable getColoredString(String mString) {
         Spannable spannable = new SpannableString(mString);
@@ -60,6 +65,7 @@ public class BugReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bug_report);
+        this.scale = AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.buttonclick);
 
         try
         {
@@ -81,10 +87,11 @@ public class BugReportActivity extends AppCompatActivity {
         bugreportTemplate += "Severity/Priority:\nHigh severity.  I am unable to purchase and book classes\n\n";
         det.setText(bugreportTemplate);
 
-        Button cib = findViewById(R.id.issue_button);
+        final Button cib = findViewById(R.id.issue_button);
         cib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                cib.startAnimation(BugReportActivity.this.scale);
                 Log.v("ayc", "clicked");
                 EditText det = BugReportActivity.this.findViewById(R.id.issue_description);
                 EditText tet = BugReportActivity.this.findViewById(R.id.issue_title);

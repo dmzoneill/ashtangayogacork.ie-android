@@ -92,12 +92,11 @@
 
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/pBar"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </ProgressBar>
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:id="@+id/loadingView"
+            android:visibility="invisible"/>
 
         <LinearLayout
             android:layout_marginTop="20dp"
@@ -110,8 +109,10 @@
                 android:id="@+id/register_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/ubuntu_regular"
                 android:textColor="#0b80ff"
+                android:textStyle="normal"
+                android:textSize="16sp"
                 android:text="Register" />
 
             <TextView
@@ -119,7 +120,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textStyle="normal"
+                android:textSize="16sp"
                 android:text="|" />
 
             <TextView
@@ -127,8 +130,10 @@
                 android:layout_marginRight="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/ubuntu"
+                android:fontFamily="@font/ubuntu_regular"
                 android:textColor="#0b80ff"
+                android:textStyle="normal"
+                android:textSize="16sp"
                 android:text="lost password?" />
 
         </LinearLayout>
@@ -138,8 +143,10 @@
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/ubuntu"
+            android:fontFamily="@font/ubuntu_regular"
             android:textColor="#0b80ff"
+            android:textStyle="normal"
+            android:textSize="16sp"
             android:text="Privacy policy" />
 
     </LinearLayout>

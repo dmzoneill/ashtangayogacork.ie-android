@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -47,6 +48,7 @@ import ie.ayc.VoucherActivity;
 
 public class ProfileFragment extends Fragment implements Observer {
 
+    private Animation scale;
     private View root;
 
     public static Spannable getColoredString(String mString) {
@@ -58,11 +60,9 @@ public class ProfileFragment extends Fragment implements Observer {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_profile, container, false);
+        this.scale = AnimationUtils.loadAnimation(this.getContext(), R.anim.buttonclick);
 
         try {
-            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
-            progressOverlay.setVisibility(View.VISIBLE);
-
             int[] headers = new int[4];
             headers[0] = R.id.my_bookings;
             headers[1] = R.id.expiring_credit;
@@ -75,21 +75,23 @@ public class ProfileFragment extends Fragment implements Observer {
                 tv.setText(getColoredString(old_text));
             }
 
-            ImageButton ime = this.root.findViewById(R.id.button_logout);
+            final ImageButton ime = this.root.findViewById(R.id.button_logout);
             ime.setClickable(true);
             ime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    ime.startAnimation(ProfileFragment.this.scale);
                     AycCookieManager.getInstance().clearCookies();
                     getActivity().finish();
                 }
             });
 
-            ImageButton imp = this.root.findViewById(R.id.button_settings);
+            final ImageButton imp = this.root.findViewById(R.id.button_settings);
             imp.setClickable(true);
             imp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    imp.startAnimation(ProfileFragment.this.scale);
                     Intent myIntent = new Intent(ProfileFragment.this.getActivity(), SettingsActivity.class);
                     //myIntent.putExtra("url", result); //Optional parameters
                     ProfileFragment.this.startActivity(myIntent);
@@ -146,8 +148,8 @@ public class ProfileFragment extends Fragment implements Observer {
             ll.removeAllViews();
 
             LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            TableRow booking_row_header = (TableRow) wvi.inflate(R.layout.profile_booking_table_row_header, null);
-            ll.addView(booking_row_header);
+            //TableRow booking_row_header = (TableRow) wvi.inflate(R.layout.profile_booking_table_row_header, null);
+            //ll.addView(booking_row_header);
 
             Log.v("ayc-profile", "bookings:" + bookings.length());
             for (int t = 0; t < bookings.length(); t++) {
@@ -157,17 +159,24 @@ public class ProfileFragment extends Fragment implements Observer {
                 TextView tvdate = (TextView) booking_row.getChildAt(0);
                 TextView tvtime = (TextView) booking_row.getChildAt(1);
                 TextView tvname = (TextView) booking_row.getChildAt(2);
-                TextView tvinstr = (TextView) booking_row.getChildAt(3);
+                //TextView tvinstr = (TextView) booking_row.getChildAt(3);
 
                 tvdate.setText(booking.getString("date"));
                 tvtime.setText(booking.getString("start_time"));
                 tvname.setText(booking.getString("class_name"));
-                tvinstr.setText(booking.getString("instructor_name"));
+                //tvinstr.setText(booking.getString("instructor_name"));
 
-                if (t % 2 > 0) {
-                    booking_row.setBackgroundColor(Color.parseColor("#efefef"));
-                }
+                //if (t % 2 > 0) {
+                //    booking_row.setBackgroundColor(Color.parseColor("#efefef"));
+                //}
 
+                ll.addView(booking_row);
+            }
+
+            if( bookings.length() == 0) {
+                TableRow booking_row = (TableRow) wvi.inflate(R.layout.empty_msg_table_row, null);
+                TextView empty = (TextView) booking_row.getChildAt(0);
+                empty.setText("You have 0 bookings");
                 ll.addView(booking_row);
             }
         }
@@ -177,17 +186,33 @@ public class ProfileFragment extends Fragment implements Observer {
     }
 
     private void updateExpiringCredit() {
+        JSONObject simplified = null;
+        JSONArray expired = null;
+        TableLayout ll = null;
+        LayoutInflater wvi = null;
+
         try {
-            JSONArray expired = ScraperManager.getExpiringCredit();
-            JSONObject simplified = expired.getJSONObject(1);
+            wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ll = this.root.findViewById(R.id.profile_expiring_credit_ll);
+            ll.removeAllViews();
+            expired = ScraperManager.getExpiringCredit();
+            simplified = expired.getJSONObject(1);
+        } catch (Exception e){
+            if(simplified == null) {
+                TableRow booking_row = (TableRow) wvi.inflate(R.layout.empty_msg_table_row, null);
+                TextView empty = (TextView) booking_row.getChildAt(0);
+                empty.setText("You have no expiring credit");
+                ll.addView(booking_row);
+                return;
+            }
+        }
+
+
+        try {
             Log.v("ayc-profile","expired-length: " + expired.length());
 
-            TableLayout ll = this.root.findViewById(R.id.profile_expiring_credit_ll);
-            ll.removeAllViews();
-
-            LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            TableRow used_row_header = (TableRow) wvi.inflate(R.layout.profile_credit_table_row_header, null);
-            ll.addView(used_row_header);
+            //TableRow used_row_header = (TableRow) wvi.inflate(R.layout.profile_credit_table_row_header, null);
+            //ll.addView(used_row_header);
 
             int t = 0;
             for (Iterator<String> it = simplified.keys(); it.hasNext(); ) {
@@ -217,6 +242,13 @@ public class ProfileFragment extends Fragment implements Observer {
 
                 ll.addView(expire_row);
                 t++;
+            }
+
+            if(simplified.keys().hasNext() == false) {
+                TableRow booking_row = (TableRow) wvi.inflate(R.layout.empty_msg_table_row, null);
+                TextView empty = (TextView) booking_row.getChildAt(0);
+                empty.setText("You have no expiring credit");
+                ll.addView(booking_row);
             }
         }
         catch(Exception e){
@@ -277,17 +309,31 @@ public class ProfileFragment extends Fragment implements Observer {
     }
 
     private void updateUsedCredit() {
+        JSONObject simplified = null;
+        JSONArray used = null;
+        TableLayout ll = null;
+        LayoutInflater wvi = null;
+
         try {
-            JSONArray used = ScraperManager.getUsedCredit();
-            JSONObject simplified = used.getJSONObject(1);
-            Log.v("ayc-profile","expired-length: " + used.length());
-
-            TableLayout ll = this.root.findViewById(R.id.profile_used_credit_ll);
+            wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ll = this.root.findViewById(R.id.profile_used_credit_ll);
             ll.removeAllViews();
+            used = ScraperManager.getUsedCredit();
+            simplified = used.getJSONObject(1);
+        } catch (Exception e){
+            if(simplified == null) {
+                TableRow booking_row = (TableRow) wvi.inflate(R.layout.empty_msg_table_row, null);
+                TextView empty = (TextView) booking_row.getChildAt(0);
+                empty.setText("You have no used credit");
+                ll.addView(booking_row);
+                return;
+            }
+        }
 
-            LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            TableRow used_row_header = (TableRow) wvi.inflate(R.layout.profile_credit_table_row_header, null);
-            ll.addView(used_row_header);
+        try {
+            Log.v("ayc-profile","used-length: " + used.length());
+            //TableRow used_row_header = (TableRow) wvi.inflate(R.layout.profile_credit_table_row_header, null);
+            //ll.addView(used_row_header);
 
             int t = 0;
             for (Iterator<String> it = simplified.keys(); it.hasNext(); ) {
@@ -332,8 +378,8 @@ public class ProfileFragment extends Fragment implements Observer {
             ll.removeAllViews();
 
             LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            TableRow trans_row_header = (TableRow) wvi.inflate(R.layout.profile_trans_table_row_header, null);
-            ll.addView(trans_row_header);
+            //TableRow trans_row_header = (TableRow) wvi.inflate(R.layout.profile_trans_table_row_header, null);
+            //ll.addView(trans_row_header);
 
             for(int t=0; t< transactions.length(); t++) {
                 JSONObject obj = transactions.getJSONObject(t);
@@ -345,8 +391,8 @@ public class ProfileFragment extends Fragment implements Observer {
                 TextView tvdate = (TextView) trans_row.getChildAt(0);
                 TextView tvtransid = (TextView) trans_row.getChildAt(1);
                 TextView tvtype = (TextView) trans_row.getChildAt(2);
-                ImageView ivreceipt = (ImageView) trans_row.getChildAt(3);
-                ImageView ivgift = (ImageView) trans_row.getChildAt(4);
+                final ImageView ivreceipt = (ImageView) trans_row.getChildAt(3);
+                final ImageView ivgift = (ImageView) trans_row.getChildAt(4);
 
                 final String tid = java.net.URLDecoder.decode(obj.getString("id"), "UTF-8");
                 String name = java.net.URLDecoder.decode(obj.getString("payer_email"), "UTF-8");
@@ -375,6 +421,7 @@ public class ProfileFragment extends Fragment implements Observer {
                     ivgift.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            ivgift.startAnimation(ProfileFragment.this.scale);
                             ProfileFragment.this.showVoucherDialog(tid);
                         }
                     });
@@ -387,6 +434,7 @@ public class ProfileFragment extends Fragment implements Observer {
                 ivreceipt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v){
+                        ivreceipt.startAnimation(ProfileFragment.this.scale);
                         Common.alert(getContext(), "Loading receipt...");
                         v.startAnimation(AnimationUtils.loadAnimation(ProfileFragment.this.getContext(), R.anim.image_click));
                         Intent myIntent = new Intent(ProfileFragment.this.getActivity(), ReceiptActivity.class);
@@ -396,6 +444,13 @@ public class ProfileFragment extends Fragment implements Observer {
                 });
 
                 ll.addView(trans_row);
+            }
+
+            if(transactions.length() == 0) {
+                TableRow booking_row = (TableRow) wvi.inflate(R.layout.empty_msg_table_row, null);
+                TextView empty = (TextView) booking_row.getChildAt(0);
+                empty.setText("You have no transactions");
+                ll.addView(booking_row);
             }
         }
         catch(Exception e){
@@ -413,9 +468,6 @@ public class ProfileFragment extends Fragment implements Observer {
             this.updateUsedCredit();
             this.updateBookings();
             this.updateUsername();
-
-            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
-            progressOverlay.setVisibility(View.INVISIBLE);
         }
         catch (Exception e){
             Log.v("ayc-classes-update", e.getMessage());
@@ -437,7 +489,6 @@ public class ProfileFragment extends Fragment implements Observer {
             Log.v("ayc-profile", "error: " + error);
             Log.v("ayc-profile", "result: " + result);
 
-            FrameLayout progressOverlay = this.root.findViewById(R.id.progress_overlay);
             ScraperManager sm = ScraperManager.getInstance();
 
             switch (action) {

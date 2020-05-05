@@ -36,6 +36,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
                 android:layout_marginBottom="10dp"/>
 
             <TextView
@@ -43,6 +45,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
                 android:layout_marginBottom="20dp"/>
 
             <TextView
@@ -50,6 +54,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
                 android:textSize="14sp"/>
 
             <TextView
@@ -57,6 +63,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
                 android:textSize="14sp"/>
 
             <ImageView
@@ -80,6 +88,8 @@
                 android:text="All purchase options below can be gifted to an individual or a loved one.  Purchase as normal and then visit the profile page and gift the transaction."
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
                 android:textSize="14sp"/>
 
             <ImageView
@@ -103,7 +113,9 @@
                 android:text="1 credit = 1 class"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"/>
+                android:textSize="12sp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"/>
 
             <LinearLayout
                 android:id="@+id/monthlies_table"
@@ -119,13 +131,17 @@
                 android:text="¹ Multiple monthlies can be bought and can be activated at a later stage"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"/>
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
+                android:textSize="12sp"/>
 
             <TextView
                 android:text="² Some monthlies are limited in the amount of times you can purchase it"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
+                android:textSize="12sp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
                 android:layout_marginBottom="20dp"/>
 
             <ImageView
@@ -149,7 +165,9 @@
                 android:text="1 credit = 1 class"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"/>
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
+                android:textSize="12sp"/>
 
             <LinearLayout
                 android:id="@+id/specials_table"
@@ -180,13 +198,17 @@
                 android:text="1 credit = 1 class"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"/>
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"
+                android:textSize="12sp"/>
 
             <TextView
                 android:text="Valid from date of purchase"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"/>
+                android:textSize="12sp"
+                android:fontFamily="@font/ubuntu_regular"
+                android:textColor="#000000"/>
 
             <LinearLayout
                 android:id="@+id/standard_table"

@@ -6,8 +6,6 @@
     android:background="@drawable/background"
     tools:context=".ui.ClassesFragment">
 
-    <include layout="@layout/progress"/>
-
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
@@ -24,7 +22,7 @@
 
             <TextView
                 android:id="@+id/available_class_credits"
-                android:text="Available Class Credits"
+                android:text="Available Class Credit"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -32,13 +30,13 @@
                 android:textStyle="bold"
                 android:fontFamily="@font/josefin_bold"
                 android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="28sp"/>
 
             <LinearLayout
                 android:id="@+id/credit_type_main"
                 android:orientation="horizontal"
                 android:layout_marginRight="6dp"
-                android:layout_marginLeft="6dp"
+                android:layout_marginLeft="15dp"
                 android:layout_marginBottom="15dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
@@ -49,9 +47,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="10dp"
+                    android:fontFamily="@font/josefin_bold"
                     android:textColor="@android:color/holo_red_dark"
                     android:textStyle="bold"
-                    android:textSize="22sp"/>
+                    android:textSize="26sp"/>
 
                 <Button
                     android:text="Activate Monthly"
@@ -79,7 +78,7 @@
                 android:id="@+id/credit_types"
                 android:orientation="vertical"
                 android:layout_marginRight="6dp"
-                android:layout_marginLeft="6dp"
+                android:layout_marginLeft="25dp"
                 android:layout_marginBottom="15dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">

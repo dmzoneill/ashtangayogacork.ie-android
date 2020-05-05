@@ -12,8 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,6 +35,7 @@ import ie.ayc.UpdateSource;
 
 public class PricesFragment extends Fragment implements Observer {
 
+    private Animation scale;
     private View root;
 
     public static Spannable getColoredString(String mString) {
@@ -43,6 +47,7 @@ public class PricesFragment extends Fragment implements Observer {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_prices, container, false);
+        this.scale = AnimationUtils.loadAnimation(this.getContext(), R.anim.buttonclick);
 
         int[] headers = new int[5];
         headers[0] = R.id.yoga_for_everyone;
@@ -123,10 +128,11 @@ public class PricesFragment extends Fragment implements Observer {
 
                 final String paypal_code = price.get("paypal_button_code").toString();
 
-                ImageButton buybutton = (ImageButton) rowcontainer.getChildAt(2);
+                final ImageButton buybutton = (ImageButton) rowcontainer.getChildAt(2);
                 buybutton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        buybutton.startAnimation(PricesFragment.this.scale);
                         Intent myIntent = new Intent(getActivity(), PurchaseActivity.class);
                         myIntent.putExtra("paypal_button_code", paypal_code); //Optional parameters
                         PricesFragment.this.startActivity(myIntent);
@@ -135,6 +141,13 @@ public class PricesFragment extends Fragment implements Observer {
 
                 ll.addView(rowcontainer);
                 Log.v("ayc-prices", " added row");
+            }
+            if(prices.length() == 0) {
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                TableRow booking_row = (TableRow) vi.inflate(R.layout.empty_msg_table_row, null);
+                TextView empty = (TextView) booking_row.getChildAt(0);
+                empty.setText("Sorry, there are none available at this time, contact us for your information");
+                ll.addView(booking_row);
             }
         }
         catch(Exception e){

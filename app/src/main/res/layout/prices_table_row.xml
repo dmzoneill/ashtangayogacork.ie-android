@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textStyle="bold"
+            android:fontFamily="@font/ubuntu_bold"
+            android:textColor="#000000"
             android:textSize="14sp"/>
 
         <TextView
@@ -30,7 +31,9 @@
             android:maxLines="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="11sp"/>
+            android:fontFamily="@font/ubuntu_regular"
+            android:textColor="#000000"
+            android:textSize="12sp"/>
 
         <TextView
             android:text="You will receive 30 credit(s) and it's valid for 32 days."
@@ -38,7 +41,9 @@
             android:maxLines="2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="11sp"/>
+            android:fontFamily="@font/ubuntu_regular"
+            android:textColor="#000000"
+            android:textSize="12sp"/>
 
     </LinearLayout>
 
@@ -51,6 +56,8 @@
         android:layout_gravity="center_vertical"
         android:textStyle="bold"
         android:textSize="14sp"
+        android:textColor="#000000"
+        android:fontFamily="@font/ubuntu_bold"
         android:text="€56"/>
 
     <ImageButton

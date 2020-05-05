@@ -61,7 +61,7 @@ public class AycNavigationActivity extends AppCompatActivity implements Observer
     @Override
     protected void onResume(){
         super.onResume();
-        ScraperManagerScheduler.schedule_task(getApplicationContext());
+        //ScraperManagerScheduler.schedule_task(getApplicationContext());
     }
 
     @Override

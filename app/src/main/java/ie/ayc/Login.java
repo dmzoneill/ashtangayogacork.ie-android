@@ -6,9 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,10 +24,12 @@ import org.json.JSONObject;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import com.bumptech.glide.Glide;
 
 
 public class Login extends AppCompatActivity implements AsyncResponse {
 
+    private Animation scale;
     public static Context mContext;
     static int stage = 0;
     private final AsyncResponse this_async;
@@ -39,15 +44,17 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        this.scale = AnimationUtils.loadAnimation(this, R.anim.buttonclick);
+
+        ImageView loading = findViewById(R.id.loadingView);
+        Glide.with(this).load(R.drawable.loadingspinner).into(loading);
+        loading.setVisibility(View.VISIBLE);
 
         try
         {
             this.getSupportActionBar().hide();
         }
         catch (NullPointerException e){}
-
-        ProgressBar pgsBar = findViewById(R.id.pBar);
-        pgsBar.setVisibility(View.VISIBLE);
 
         LinearLayout login_form = findViewById(R.id.login_form);
         login_form.setVisibility(View.GONE);
@@ -114,10 +121,12 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     }
 
     public void enableLoginButton() {
-        Button clickButton = findViewById(R.id.login_button);
+        final Button clickButton = findViewById(R.id.login_button);
 
         clickButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                clickButton.startAnimation(scale);
+
                 LoginManager task = new LoginManager();
                 stage = 1;
                 task.delegate = this_async;
@@ -145,6 +154,7 @@ public class Login extends AppCompatActivity implements AsyncResponse {
 
                 String postfields = "log=" + usernameField.getText() + "&pwd=" + passwordField.getText() + "&wp-submit=Log+In&redirect_to=https%3A%2F%2Fashtangayoga.ie%2Fprofile%2F&testcookie=1";
                 task.execute("https://ashtangayoga.ie/wp-login.php", postfields);
+                clickButton.setText("Standy");
             }
         });
 
@@ -169,10 +179,11 @@ public class Login extends AppCompatActivity implements AsyncResponse {
 
     @Override
     public void processFinish(String output) {
+        final Button clickButton = findViewById(R.id.login_button);
         Log.v("ayc-delegate", output);
         Log.v("ayc-delegate-stage", String.valueOf(stage));
 
-        ProgressBar pgsBar = findViewById(R.id.pBar);
+        ImageView loading = findViewById(R.id.loadingView);
         LinearLayout login_form = findViewById(R.id.login_form);
 
         try {
@@ -181,28 +192,33 @@ public class Login extends AppCompatActivity implements AsyncResponse {
                 if (reader.getString("result").compareToIgnoreCase("false") == 0) {
                     Log.v("ayc-delegate-button", "enabled");
                     AycCookieManager.getInstance().clearCookies();
-                    pgsBar.setVisibility(View.GONE);
+                    loading.setVisibility(View.GONE);
                     login_form.setVisibility(View.VISIBLE);
                     this.enableLoginButton();
+                    clickButton.setText("LOGIN");
                 } else {
                     Log.v("ayc-delegate-button", "login success send intent");
                     this.loginProcessed();
+                    clickButton.setText("Standby");
                 }
             } else if (stage == 1) {
                 stage = 2;
-                pgsBar.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.VISIBLE);
                 login_form.setVisibility(View.GONE);
                 Log.v("ayc-delegate-button", "click, check login");
                 this.check_logged_in();
+                clickButton.setText("Standby");
             } else if (stage == 2) {
                 if (reader.getString("result").compareToIgnoreCase("false") == 0) {
                     Log.v("ayc-delegate", "login failed confirmed");
                     AycCookieManager.getInstance().clearCookies();
-                    pgsBar.setVisibility(View.GONE);
+                    loading.setVisibility(View.GONE);
                     login_form.setVisibility(View.VISIBLE);
+                    clickButton.setText("LOGIN");
                 } else {
                     Log.v("ayc-delegate-button", "login success send intent");
                     this.loginProcessed();
+                    clickButton.setText("Standby");
                 }
             }
         } catch (Exception e) {
