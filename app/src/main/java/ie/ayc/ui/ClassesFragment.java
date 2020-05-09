@@ -2,8 +2,10 @@ package ie.ayc.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -19,6 +21,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -460,12 +463,27 @@ public class ClassesFragment extends Fragment implements Observer {
                 TextView tvdate = (TextView) booking_row.getChildAt(0);
                 TextView tvtime = (TextView) booking_row.getChildAt(1);
                 TextView tvname = (TextView) booking_row.getChildAt(2);
-                //TextView tvinstr = (TextView) booking_row.getChildAt(3);
+                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(3);
 
                 tvdate.setText(booking.getString("date"));
                 tvtime.setText(booking.getString("start_time"));
                 tvname.setText(booking.getString("class_name"));
-                //tvinstr.setText(booking.getString("instructor_name"));
+
+                final String murl = booking.getString("murl");
+
+                if(murl.compareTo("") == 0) {
+                    meeting_button.setVisibility(View.INVISIBLE);
+                }
+
+                meeting_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        meeting_button.startAnimation(ClassesFragment.this.scale);
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(murl));
+                        startActivity(i);
+                    }
+                });
 
                 ll.addView(booking_row);
             } catch (Exception e) {
