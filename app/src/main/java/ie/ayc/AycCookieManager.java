@@ -14,6 +14,7 @@ import java.net.CookiePolicy;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.List;
 
 public class AycCookieManager {
@@ -83,14 +84,22 @@ public class AycCookieManager {
             for (String cookie : list) {
                 String[] allparts = cookie.split(";");
                 String[] cookie_parts = allparts[0].split("=");
-                HttpCookie thecookie = new HttpCookie(cookie_parts[0], cookie_parts[1]);
-                this.mCookieManager.getCookieStore().add(new URI("https://ashtangayoga.ie"), thecookie);
-                Log.v("ayc-cookie-update", "updated cookie store with: " + cookie);
+                if(cookie_parts.length > 1) {
+                    HttpCookie thecookie = new HttpCookie(cookie_parts[0], cookie_parts[1]);
+                    this.mCookieManager.getCookieStore().add(new URI("https://ashtangayoga.ie"), thecookie);
+                    Log.v("ayc-cookie-update", "updated cookie store with: " + cookie);
+                } else {
+                    Log.v("ayc-cookie-single", cookie);
+                }
                 this.saveCookies();
             }
         } catch (Exception e) {
             Log.v("ayc-cookie-add", "failed to update cookie store");
             Log.v("ayc-cookie-add", e.getMessage());
+            for (int i = 0; i < e.getStackTrace().length; i++) {
+                StackTraceElement x = e.getStackTrace()[i];
+                Log.v("ayc-cookie-add", x.getFileName() + ": " + x.getMethodName() + ": " + x.getLineNumber() + ": " + x.toString());
+            }
         }
     }
 

@@ -111,10 +111,12 @@ public class Login extends AppCompatActivity implements AsyncResponse {
     protected void onResume() {
         super.onResume();
         stage = 0;
+        Log.v("ayc-social", "onresume");
         this.check_logged_in();
     }
 
     private void check_logged_in() {
+        Log.v("ayc-login", "check logged in");
         SessionManager task = new SessionManager();
         task.delegate = this.this_async;
         task.execute("https://ashtangayoga.ie/json/?action=check_logged_in");
@@ -158,12 +160,24 @@ public class Login extends AppCompatActivity implements AsyncResponse {
             }
         });
 
-        ImageButton facebookButton = findViewById(R.id.login_button_facebook);
+        final ImageButton facebookButton = findViewById(R.id.login_button_facebook);
 
         facebookButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                facebookButton.startAnimation(scale);
                 Intent myIntent = new Intent(Login.this, SocialLoginManager.class);
-                myIntent.putExtra("url", "https://www.facebook.com/login.php?skip_api_login=1&api_key=489379651801344&kid_directed_site=0&app_id=489379651801344&signed_next=1&next=https%3A%2F%2Fwww.facebook.com%2Fv3.2%2Fdialog%2Foauth%3Fdisplay%3Dpopup%26response_type%3Dcode%26client_id%3D489379651801344%26redirect_uri%3Dhttps%253A%252F%252Fashtangayoga.ie%252Fwp-login.php%253FloginSocial%253Dfacebook%26state%3Dcb92ff6b7e1a530d849f53313e43a2ae%26scope%3Dpublic_profile%252Cemail%26ret%3Dlogin%26fbapp_pres%3D0%26logger_id%3Dec48732f-9d02-48cc-acd4-2afc5e54d620&cancel_url=https%3A%2F%2Fashtangayoga.ie%2Fwp-login.php%3FloginSocial%3Dfacebook%26error%3Daccess_denied%26error_code%3D200%26error_description%3DPermissions%2Berror%26error_reason%3Duser_denied%26state%3Dcb92ff6b7e1a530d849f53313e43a2ae%23_%3D_&display=popup&locale=en_US&pl_dbl=0"); //Optional parameters
+                myIntent.putExtra("type","fb");
+                Login.this.startActivity(myIntent);
+            }
+        });
+
+        final ImageButton googleButton = findViewById(R.id.login_button_google);
+
+        googleButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                googleButton.startAnimation(scale);
+                Intent myIntent = new Intent(Login.this, SocialLoginManager.class);
+                myIntent.putExtra("type","google");
                 Login.this.startActivity(myIntent);
             }
         });
