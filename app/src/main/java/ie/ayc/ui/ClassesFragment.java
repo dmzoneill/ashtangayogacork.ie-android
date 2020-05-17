@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import ie.ayc.AycNavigationActivity;
 import ie.ayc.Common;
 import ie.ayc.Observer;
 import ie.ayc.R;
@@ -91,12 +92,18 @@ public class ClassesFragment extends Fragment implements Observer {
             public void onClick(final View view) {
                 start_monthly_button.startAnimation(ClassesFragment.this.scale);
                 ClassesFragment.this.showStartMonthlyDialog();
+
+                Bundle params = new Bundle();
+                params.putString("start", "now");
+                AycNavigationActivity.mFirebaseAnalytics.logEvent("monthly", params);
             }
         });
 
         ScraperManager sm = ScraperManager.getInstance();
         sm.attach(this);
         sm.object_notify(UpdateSource.classes);
+
+        AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "classes", null);
 
         return root;
     }
@@ -254,7 +261,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 Log.v("ayc-classes", " row: " + t);
 
                 TableRow classcontainer = (TableRow) vi.inflate(R.layout.classes_table_row_time, null);
-                JSONObject classs = classes.getJSONObject(t);
+                final JSONObject classs = classes.getJSONObject(t);
 
                 String date = classs.get("date").toString();
                 Log.v("ayc-class-date", date);
@@ -315,7 +322,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 }
 
                 if (classs.get("button_text").toString().compareTo("Cancelled") != 0 && Integer.parseInt(classs.get("max_attendees").toString()) == 0) {
-                    btbk.setVisibility(View.GONE);
+                    btbk.setVisibility(View.INVISIBLE);
                 }
 
                 ll.addView(classcontainer);
@@ -390,6 +397,9 @@ public class ClassesFragment extends Fragment implements Observer {
         ScraperManager sm = ScraperManager.getInstance();
         sm.book_class_add(class_id);
 
+        Bundle params = new Bundle();
+        params.putString("booking_confirmed", class_id);
+        AycNavigationActivity.mFirebaseAnalytics.logEvent("class", params);
     }
 
     private void cancel_class(String class_id) {
@@ -397,6 +407,10 @@ public class ClassesFragment extends Fragment implements Observer {
 
         ScraperManager sm = ScraperManager.getInstance();
         sm.book_class_remove(class_id);
+
+        Bundle params = new Bundle();
+        params.putString("booking_cancel", class_id);
+        AycNavigationActivity.mFirebaseAnalytics.logEvent("class", params);
     }
 
     private void updateCredits() {
@@ -463,7 +477,7 @@ public class ClassesFragment extends Fragment implements Observer {
                 TextView tvdate = (TextView) booking_row.getChildAt(0);
                 TextView tvtime = (TextView) booking_row.getChildAt(1);
                 TextView tvname = (TextView) booking_row.getChildAt(2);
-                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(3);
+                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(4);
 
                 tvdate.setText(booking.getString("date"));
                 tvtime.setText(booking.getString("start_time"));

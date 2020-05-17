@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "956994896945",
+    "firebase_url": "https://ashtanga-yoga-cork.firebaseio.com",
+    "project_id": "ashtanga-yoga-cork",
+    "storage_bucket": "ashtanga-yoga-cork.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956994896945:android:c9116e6221f8cb60ef8110",
+        "android_client_info": {
+          "package_name": "ie.ayc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956994896945-139ai8u5ofi3mjj9ki3lgkcb30d91l3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnwzXvksQQitxSnkA-V6APuHiDUmjyHws"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956994896945-139ai8u5ofi3mjj9ki3lgkcb30d91l3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

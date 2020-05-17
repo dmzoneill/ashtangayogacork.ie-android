@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import ie.ayc.AycNavigationActivity;
 import ie.ayc.Common;
 import ie.ayc.Observer;
 import ie.ayc.PurchaseActivity;
@@ -66,6 +67,8 @@ public class PricesFragment extends Fragment implements Observer {
         sm.attach(this);
         sm.object_notify(UpdateSource.prices);
 
+        AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "prices", null);
+
         return root;
     }
 
@@ -104,8 +107,8 @@ public class PricesFragment extends Fragment implements Observer {
                 Log.v("ayc-prices", " row: " + t);
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 LinearLayout rowcontainer = (LinearLayout) vi.inflate(R.layout.prices_table_row, null);
-                JSONObject price = prices.getJSONObject(t);
-                String name = price.get("name").toString();
+                final JSONObject price = prices.getJSONObject(t);
+                final String name = price.get("name").toString();
                 Log.v("ayc-prices", " name: " + name);
                 String euros = price.get("price").toString();
                 Log.v("ayc-prices", " euros: " + euros);
@@ -124,9 +127,8 @@ public class PricesFragment extends Fragment implements Observer {
                 TextView tvprice = (TextView) rowcontainer.getChildAt(1);
                 tvprice.setText("€" + euros);
 
-                final Context txt = this.getContext();
-
-                final String paypal_code = price.get("paypal_button_code").toString();
+                final String endpoint = price.get("endpoint").toString();
+                final String params = price.get("params").toString();
 
                 final ImageButton buybutton = (ImageButton) rowcontainer.getChildAt(2);
                 buybutton.setOnClickListener(new View.OnClickListener() {
@@ -134,8 +136,12 @@ public class PricesFragment extends Fragment implements Observer {
                     public void onClick(View v) {
                         buybutton.startAnimation(PricesFragment.this.scale);
                         Intent myIntent = new Intent(getActivity(), PurchaseActivity.class);
-                        myIntent.putExtra("paypal_button_code", paypal_code); //Optional parameters
+                        myIntent.putExtra("endpoint", new String[] { endpoint, params }); //Optional parameters
                         PricesFragment.this.startActivity(myIntent);
+
+                        Bundle params = new Bundle();
+                        params.putString("class_type", name);
+                        AycNavigationActivity.mFirebaseAnalytics.logEvent("buy", params);
                     }
                 });
 

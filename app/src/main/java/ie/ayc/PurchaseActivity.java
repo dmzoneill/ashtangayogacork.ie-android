@@ -46,9 +46,9 @@ public class PurchaseActivity extends AppCompatActivity {
             }
         });
 
-        String url = "https://www.paypal.com/cgi-bin/webscr";
-        String paypalid = getIntent().getStringExtra("paypal_button_code");
-        String postData = "cmd=_s-xclick&hosted_button_id=" + paypalid + "&submit.x=83&submit.y=7";
+        String[] data = getIntent().getStringArrayExtra("endpoint");
+        String url = data[0];
+        String postData = data[1];
 
         final WebView wv = findViewById(R.id.webview);
         wv.getSettings().setJavaScriptEnabled(true);
@@ -114,6 +114,8 @@ public class PurchaseActivity extends AppCompatActivity {
 
         wv.setWebViewClient(wvc);
         wv.addJavascriptInterface(new MyJavaScriptInterface(this), "HTMLOUT");
+        Log.v("ayc-purchase", postData);
+        Log.v("ayc-purchase", url);
         wv.postUrl(url,postData.getBytes());
     }
 

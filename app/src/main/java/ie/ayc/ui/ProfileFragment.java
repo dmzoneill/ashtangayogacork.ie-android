@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import ie.ayc.AycCookieManager;
+import ie.ayc.AycNavigationActivity;
 import ie.ayc.Common;
 import ie.ayc.DownloadImageTask;
 import ie.ayc.Observer;
@@ -98,6 +99,8 @@ public class ProfileFragment extends Fragment implements Observer {
                     ProfileFragment.this.startActivity(myIntent);
                 }
             });
+
+            AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "profile", null);
         }
         catch(Exception e) {
             Log.v("ayc-profile",e.getMessage());
@@ -134,6 +137,8 @@ public class ProfileFragment extends Fragment implements Observer {
             String un = ud.getString("user_login");
             TextView tv = this.root.findViewById(R.id.username);
             tv.setText(un);
+
+            AycNavigationActivity.mFirebaseAnalytics.setUserId(ud.getString("ID"));
         }
         catch(Exception e) {
             Log.v("ayc-profile",e.getMessage());
@@ -160,7 +165,7 @@ public class ProfileFragment extends Fragment implements Observer {
                 TextView tvdate = (TextView) booking_row.getChildAt(0);
                 TextView tvtime = (TextView) booking_row.getChildAt(1);
                 TextView tvname = (TextView) booking_row.getChildAt(2);
-                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(3);
+                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(4);
 
                 tvdate.setText(booking.getString("date"));
                 tvtime.setText(booking.getString("start_time"));

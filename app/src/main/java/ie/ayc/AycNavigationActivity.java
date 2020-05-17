@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jediburrell.customfab.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import ie.ayc.ui.PricesFragment;
 
 public class AycNavigationActivity extends AppCompatActivity implements Observer {
 
+    public static FirebaseAnalytics mFirebaseAnalytics;
     public AycNavigationActivity(){
         ScraperManager.getInstance().attach(this);
     }
@@ -56,6 +58,8 @@ public class AycNavigationActivity extends AppCompatActivity implements Observer
                 AycNavigationActivity.this.startActivity(myIntent);
             }
         });
+
+        AycNavigationActivity.mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     @Override

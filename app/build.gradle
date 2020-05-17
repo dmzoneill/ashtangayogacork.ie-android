@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -8,7 +9,7 @@ android {
         applicationId "ie.ayc"
         minSdkVersion 18
         targetSdkVersion 29
-        versionCode 41
+        versionCode 43
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,6 +45,8 @@ dependencies {
     implementation "androidx.work:work-runtime:$work_version"
     implementation 'androidx.preference:preference:1.1.0-rc01'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
