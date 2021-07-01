@@ -7,188 +7,195 @@
     android:background="@drawable/background"
     tools:context=".ui.ProfileFragment">
 
-    <ScrollView
-        android:id="@+id/scrollView1"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/refreshLayoutProfile"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="?attr/actionBarSize"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/linear1"
-            android:orientation="vertical"
-            android:padding="10dp"
+        <ScrollView
+            android:id="@+id/scrollView1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:paddingBottom="?attr/actionBarSize"
+            android:fillViewport="true">
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:id="@+id/linear1"
+                android:orientation="vertical"
+                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageButton
-                    android:id="@+id/button_logout"
-                    android:scaleType="centerInside"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@android:color/white"
-                    android:src="@drawable/logout"
-                    android:layout_weight="1"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageButton
+                        android:id="@+id/button_logout"
+                        android:scaleType="centerInside"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@android:color/white"
+                        android:src="@drawable/logout"
+                        android:layout_weight="1"/>
+
+                    <ImageView
+                        android:id="@+id/person"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:src="@drawable/ic_profile_icon2"
+                        android:layout_weight="5"/>
+
+                    <ImageButton
+                        android:id="@+id/button_settings"
+                        android:scaleType="centerInside"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@android:color/white"
+                        android:src="@drawable/ic_settings_black_24dp"
+                        android:layout_weight="1"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/username"
+                    android:text="Username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/ubuntu_bold"
+                    android:textSize="28sp"/>
+
+                <TextView
+                    android:id="@+id/my_bookings"
+                    android:text="My bookings"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/josefin_bold"
+                    android:textColor="#000000"
+                    android:textSize="20sp"/>
+
+                <TableLayout
+                    android:id="@+id/profile_bookings_ll"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                </TableLayout>
 
                 <ImageView
-                    android:id="@+id/person"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
+                    android:layout_width="69dp"
+                    android:layout_height="75dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:src="@drawable/ic_profile_icon2"
-                    android:layout_weight="5"/>
+                    android:src="@drawable/sticker_ganesh" />
 
-                <ImageButton
-                    android:id="@+id/button_settings"
-                    android:scaleType="centerInside"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@android:color/white"
-                    android:src="@drawable/ic_settings_black_24dp"
-                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/expiring_credit"
+                    android:text="Expiring Credit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/josefin_bold"
+                    android:textColor="#000000"
+                    android:textSize="20sp"/>
+
+                <TableLayout
+                    android:id="@+id/profile_expiring_credit_ll"
+                    android:stretchColumns="*"
+                    android:orientation="vertical"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                </TableLayout>
+
+                <ImageView
+                    android:layout_width="69dp"
+                    android:layout_height="75dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sticker_ganesh" />
+
+                <TextView
+                    android:id="@+id/used_credit"
+                    android:text="Used Credit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/josefin_bold"
+                    android:textColor="#000000"
+                    android:textSize="20sp"/>
+
+                <TableLayout
+                    android:id="@+id/profile_used_credit_ll"
+                    android:stretchColumns="*"
+                    android:orientation="vertical"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                </TableLayout>
+
+                <ImageView
+                    android:layout_width="69dp"
+                    android:layout_height="75dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sticker_ganesh" />
+
+                <TextView
+                    android:id="@+id/transaction_history"
+                    android:text="Transaction History"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/josefin_bold"
+                    android:textColor="#000000"
+                    android:textSize="20sp"/>
+
+                <TableLayout
+                    android:id="@+id/profile_transactions_ll"
+                    android:stretchColumns="*"
+                    android:orientation="vertical"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                </TableLayout>
+
+                <ImageView
+                    android:layout_width="69dp"
+                    android:layout_height="75dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sticker_ganesh" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/username"
-                android:text="Username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_gravity="center"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:fontFamily="@font/ubuntu_bold"
-                android:textSize="28sp"/>
-
-            <TextView
-                android:id="@+id/my_bookings"
-                android:text="My bookings"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                android:fontFamily="@font/josefin_bold"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
-
-            <TableLayout
-                android:id="@+id/profile_bookings_ll"
-                android:layout_marginRight="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </TableLayout>
-
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
-
-            <TextView
-                android:id="@+id/expiring_credit"
-                android:text="Expiring Credit"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                android:fontFamily="@font/josefin_bold"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
-
-            <TableLayout
-                android:id="@+id/profile_expiring_credit_ll"
-                android:stretchColumns="*"
-                android:orientation="vertical"
-                android:layout_marginRight="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </TableLayout>
-
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
-
-            <TextView
-                android:id="@+id/used_credit"
-                android:text="Used Credit"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                android:fontFamily="@font/josefin_bold"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
-
-            <TableLayout
-                android:id="@+id/profile_used_credit_ll"
-                android:stretchColumns="*"
-                android:orientation="vertical"
-                android:layout_marginRight="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </TableLayout>
-
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
-
-            <TextView
-                android:id="@+id/transaction_history"
-                android:text="Transaction History"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                android:fontFamily="@font/josefin_bold"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
-
-            <TableLayout
-                android:id="@+id/profile_transactions_ll"
-                android:stretchColumns="*"
-                android:orientation="vertical"
-                android:layout_marginRight="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginBottom="15dp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </TableLayout>
-
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
-
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

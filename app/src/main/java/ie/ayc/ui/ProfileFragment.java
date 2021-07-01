@@ -29,11 +29,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import ie.ayc.AycCookieManager;
 import ie.ayc.AycNavigationActivity;
@@ -79,25 +82,19 @@ public class ProfileFragment extends Fragment implements Observer {
 
             final ImageButton ime = this.root.findViewById(R.id.button_logout);
             ime.setClickable(true);
-            ime.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ime.startAnimation(ProfileFragment.this.scale);
-                    AycCookieManager.getInstance().clearCookies();
-                    getActivity().finish();
-                }
+            ime.setOnClickListener(v -> {
+                ime.startAnimation(ProfileFragment.this.scale);
+                AycCookieManager.getInstance().clearCookies();
+                getActivity().finish();
             });
 
             final ImageButton imp = this.root.findViewById(R.id.button_settings);
             imp.setClickable(true);
-            imp.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    imp.startAnimation(ProfileFragment.this.scale);
-                    Intent myIntent = new Intent(ProfileFragment.this.getActivity(), SettingsActivity.class);
-                    //myIntent.putExtra("url", result); //Optional parameters
-                    ProfileFragment.this.startActivity(myIntent);
-                }
+            imp.setOnClickListener(v -> {
+                imp.startAnimation(ProfileFragment.this.scale);
+                Intent myIntent = new Intent(ProfileFragment.this.getActivity(), SettingsActivity.class);
+                //myIntent.putExtra("url", result); //Optional parameters
+                ProfileFragment.this.startActivity(myIntent);
             });
 
             AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "profile", null);
@@ -109,6 +106,16 @@ public class ProfileFragment extends Fragment implements Observer {
         ScraperManager sm = ScraperManager.getInstance();
         sm.attach(this);
         sm.object_notify(UpdateSource.profile);
+
+        SwipeRefreshLayout swipeRefreshLayout = this.root.findViewById(R.id.refreshLayoutProfile);
+
+        swipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    sm.fetch_all();
+                    swipeRefreshLayout.setRefreshing(false);
+                    sm.fetch_all();
+                }
+        );
 
         return root;
     }
@@ -162,10 +169,13 @@ public class ProfileFragment extends Fragment implements Observer {
                 JSONObject booking = bookings.getJSONObject(t);
                 TableRow booking_row = (TableRow) wvi.inflate(R.layout.profile_booking_table_row, null);
 
-                TextView tvdate = (TextView) booking_row.getChildAt(0);
-                TextView tvtime = (TextView) booking_row.getChildAt(1);
-                TextView tvname = (TextView) booking_row.getChildAt(2);
-                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(4);
+                LinearLayout datetime = (LinearLayout) booking_row.getChildAt(2);
+                TextView tvdate = (TextView) datetime.getChildAt(0);
+                TextView tvtime = (TextView) datetime.getChildAt(1);
+                TextView tvname = (TextView) booking_row.getChildAt(3);
+
+                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(0);
+                final ImageButton door_button = (ImageButton) booking_row.getChildAt(1);
 
                 tvdate.setText(booking.getString("date"));
                 tvtime.setText(booking.getString("start_time"));
@@ -177,13 +187,48 @@ public class ProfileFragment extends Fragment implements Observer {
                     meeting_button.setVisibility(View.INVISIBLE);
                 }
 
-                meeting_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        meeting_button.startAnimation(ProfileFragment.this.scale);
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(murl));
-                        startActivity(i);
+                String cdate = booking.getString("date");
+                String ctime = booking.getString("start_time");
+                Date classDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(cdate + " " + ctime);
+                Date nowDate = new Date();
+
+                int doorArmedBeforeSeconds = Integer.parseInt(booking.getString("doorArmedBeforeMins")) * 60;
+                int doorDisarmedAfterSeconds = Integer.parseInt(booking.getString("doorDisarmedAfterMins")) * 60;
+                int start = (int) (classDate.getTime() / 1000) - doorArmedBeforeSeconds;
+                int stop = (int) (classDate.getTime() / 1000) + doorDisarmedAfterSeconds;
+                int now = (int) (nowDate.getTime() / 1000);
+
+                Log.v("ayc-profile"," -- ");
+                Log.v("ayc-profile","class date:" + classDate.toString());
+                Log.v("ayc-profile","now date:" + nowDate.toString());
+                Log.v("ayc-profile","cdate: " + cdate);
+                Log.v("ayc-profile","ctime: " + ctime);
+                Log.v("ayc-profile","start: " + start);
+                Log.v("ayc-profile","stop: " + stop);
+                Log.v("ayc-profile","now: " + now);
+                Log.v("ayc-profile","doorArmedBeforeSeconds: " + doorArmedBeforeSeconds);
+                Log.v("ayc-profile","doorDisarmedAfterSeconds: " + doorDisarmedAfterSeconds);
+
+                if(now > start && now < stop) {
+                    door_button.setVisibility(View.VISIBLE);
+                } else {
+                    door_button.setVisibility(View.INVISIBLE);
+                }
+
+                meeting_button.setOnClickListener(v -> {
+                    meeting_button.startAnimation(ProfileFragment.this.scale);
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(murl));
+                    startActivity(i);
+                });
+
+                door_button.setOnClickListener(v -> {
+                    door_button.startAnimation(ProfileFragment.this.scale);
+                    try {
+                        ScraperManager.getInstance().open_door(booking.getString("class_id"));
+                    } catch(Exception e)
+                    {
+
                     }
                 });
 
@@ -306,20 +351,14 @@ public class ProfileFragment extends Fragment implements Observer {
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton("Gift",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ScraperManager sm = ScraperManager.getInstance();
-                        sm.get_voucher_url(input.getText().toString(), transid);
-                        dialog.dismiss();
-                    }
+                (dialog, which) -> {
+                    ScraperManager sm = ScraperManager.getInstance();
+                    sm.get_voucher_url(input.getText().toString(), transid);
+                    dialog.dismiss();
                 });
         // Setting Negative "NO" Button
         alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
 
         // Showing Alert Message
         alertDialog.show();
@@ -448,16 +487,13 @@ public class ProfileFragment extends Fragment implements Observer {
                 }
 
                 ivreceipt.setClickable(true);
-                ivreceipt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v){
-                        ivreceipt.startAnimation(ProfileFragment.this.scale);
-                        Common.alert(getContext(), "Loading receipt...");
-                        v.startAnimation(AnimationUtils.loadAnimation(ProfileFragment.this.getContext(), R.anim.image_click));
-                        Intent myIntent = new Intent(ProfileFragment.this.getActivity(), ReceiptActivity.class);
-                        myIntent.putExtra("transid", tid); //Optional parameters
-                        ProfileFragment.this.startActivity(myIntent);
-                    }
+                ivreceipt.setOnClickListener(v -> {
+                    ivreceipt.startAnimation(ProfileFragment.this.scale);
+                    Common.alert(getContext(), "Loading receipt...");
+                    v.startAnimation(AnimationUtils.loadAnimation(ProfileFragment.this.getContext(), R.anim.image_click));
+                    Intent myIntent = new Intent(ProfileFragment.this.getActivity(), ReceiptActivity.class);
+                    myIntent.putExtra("transid", tid); //Optional parameters
+                    ProfileFragment.this.startActivity(myIntent);
                 });
 
                 ll.addView(trans_row);
@@ -516,6 +552,11 @@ public class ProfileFragment extends Fragment implements Observer {
                         Intent myIntent = new Intent(ProfileFragment.this.getActivity(), VoucherActivity.class);
                         myIntent.putExtra("url", result); //Optional parameters
                         ProfileFragment.this.startActivity(myIntent);
+                    }
+                    break;
+                case "open_door":
+                    if (error.compareTo("") != 0) {
+                        Common.alert(getContext(), error);
                     }
                     break;
             }

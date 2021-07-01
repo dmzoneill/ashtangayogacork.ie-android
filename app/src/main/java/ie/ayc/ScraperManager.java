@@ -169,6 +169,13 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         begin_monthly.execute("https://ashtangayoga.ie/json/?a=begin_monthly");
     }
 
+    public void open_door(String id) {
+        Log.v("ayc-scraper-update", "open door: " + observers.size());
+        ScraperManager open_door = new ScraperManager();
+        open_door.delegate = this.this_async;
+        open_door.execute("https://ashtangayoga.ie/json/?a=open_door&id=" + id);
+    }
+
     public void apply_redeem_code(String code) {
         Log.v("ayc-scraper-update", "book_class_add all: " + observers.size());
         ScraperManager apply_redeem_code = new ScraperManager();
@@ -296,6 +303,9 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
     public void processFinish(String output) {
         Log.v("ayc-scraper", output);
         try {
+            Log.v("ayc-scraper-resp",output
+
+            );
             JSONObject reader = new JSONObject(output);
 
             Object obj = reader.get("result");
@@ -336,6 +346,7 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
                     expiring_credit = reader.getJSONArray("result");
                     this.object_notify(UpdateSource.profile);
                     break;
+                case "open_door":
                 case "get_voucher":
                     this.object_notify(UpdateSource.profile, ur);
                     break;

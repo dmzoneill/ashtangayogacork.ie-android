@@ -156,7 +156,7 @@ public class Login extends AppCompatActivity implements AsyncResponse {
 
                 String postfields = "log=" + usernameField.getText() + "&pwd=" + passwordField.getText() + "&wp-submit=Log+In&redirect_to=https%3A%2F%2Fashtangayoga.ie%2Fprofile%2F&testcookie=1";
                 task.execute("https://ashtangayoga.ie/wp-login.php", postfields);
-                clickButton.setText("Standy");
+                clickButton.setText("Standby");
             }
         });
 

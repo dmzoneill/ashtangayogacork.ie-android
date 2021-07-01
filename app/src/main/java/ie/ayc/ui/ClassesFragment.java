@@ -30,13 +30,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import ie.ayc.AycNavigationActivity;
 import ie.ayc.Common;
@@ -77,26 +81,22 @@ public class ClassesFragment extends Fragment implements Observer {
 
         final Button redeem_code_button = this.root.findViewById(R.id.button_redeem);
 
-        redeem_code_button.setOnClickListener(new View.OnClickListener() {
-            //@SuppressWarnings("deprecation")
-            public void onClick(final View view) {
-                redeem_code_button.startAnimation(ClassesFragment.this.scale);
-                ClassesFragment.this.showRedeemDialog("");
-            }
+        //@SuppressWarnings("deprecation")
+        redeem_code_button.setOnClickListener(view -> {
+            redeem_code_button.startAnimation(ClassesFragment.this.scale);
+            ClassesFragment.this.showRedeemDialog("");
         });
 
         final Button start_monthly_button = this.root.findViewById(R.id.button_start_monthly);
 
-        start_monthly_button.setOnClickListener(new View.OnClickListener() {
-            //@SuppressWarnings("deprecation")
-            public void onClick(final View view) {
-                start_monthly_button.startAnimation(ClassesFragment.this.scale);
-                ClassesFragment.this.showStartMonthlyDialog();
+        //@SuppressWarnings("deprecation")
+        start_monthly_button.setOnClickListener(view -> {
+            start_monthly_button.startAnimation(ClassesFragment.this.scale);
+            ClassesFragment.this.showStartMonthlyDialog();
 
-                Bundle params = new Bundle();
-                params.putString("start", "now");
-                AycNavigationActivity.mFirebaseAnalytics.logEvent("monthly", params);
-            }
+            Bundle params = new Bundle();
+            params.putString("start", "now");
+            AycNavigationActivity.mFirebaseAnalytics.logEvent("monthly", params);
         });
 
         ScraperManager sm = ScraperManager.getInstance();
@@ -104,6 +104,16 @@ public class ClassesFragment extends Fragment implements Observer {
         sm.object_notify(UpdateSource.classes);
 
         AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "classes", null);
+
+        SwipeRefreshLayout swipeRefreshLayout = this.root.findViewById(R.id.refreshLayoutClasses);
+
+        swipeRefreshLayout.setOnRefreshListener(
+                () -> {
+                    sm.fetch_all();
+                    swipeRefreshLayout.setRefreshing(false);
+                    sm.fetch_all();
+                }
+        );
 
         return root;
     }
@@ -153,20 +163,14 @@ public class ClassesFragment extends Fragment implements Observer {
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton("Redeem",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ScraperManager sm = ScraperManager.getInstance();
-                        sm.apply_redeem_code(input.getText().toString());
-                        dialog.dismiss();
-                    }
+                (dialog, which) -> {
+                    ScraperManager sm = ScraperManager.getInstance();
+                    sm.apply_redeem_code(input.getText().toString());
+                    dialog.dismiss();
                 });
         // Setting Negative "NO" Button
         alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
 
         // Showing Alert Message
         alertDialog.show();
@@ -214,20 +218,14 @@ public class ClassesFragment extends Fragment implements Observer {
 
         // Setting Positive "Yes" Button
         alertDialog.setPositiveButton("Start",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ScraperManager sm = ScraperManager.getInstance();
-                        sm.begin_monthly();
-                        dialog.dismiss();
-                    }
+                (dialog, which) -> {
+                    ScraperManager sm = ScraperManager.getInstance();
+                    sm.begin_monthly();
+                    dialog.dismiss();
                 });
         // Setting Negative "NO" Button
         alertDialog.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
 
         // Showing Alert Message
         alertDialog.show();
@@ -302,22 +300,16 @@ public class ClassesFragment extends Fragment implements Observer {
                 this.book_buttons.put(classs.get("class_id").toString(), btbk);
 
                 if (classs.get("book_button_action").toString().compareTo("ButtonCancel") != 0) {
-                    btbk.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            btbk.startAnimation(ClassesFragment.this.scale);
-                            Log.v("ayc-class-book", "clicked");
-                            ClassesFragment.this.book_button_click(btbk);
-                        }
+                    btbk.setOnClickListener(v -> {
+                        btbk.startAnimation(ClassesFragment.this.scale);
+                        Log.v("ayc-class-book", "clicked");
+                        ClassesFragment.this.book_button_click(btbk);
                     });
                 } else {
-                    btbk.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            btbk.startAnimation(ClassesFragment.this.scale);
-                            Log.v("ayc-class-book", "clicked");
-                            ClassesFragment.this.cancel_class(btbk.getTag().toString());
-                        }
+                    btbk.setOnClickListener(v -> {
+                        btbk.startAnimation(ClassesFragment.this.scale);
+                        Log.v("ayc-class-book", "clicked");
+                        ClassesFragment.this.cancel_class(btbk.getTag().toString());
                     });
                 }
 
@@ -474,10 +466,13 @@ public class ClassesFragment extends Fragment implements Observer {
                 LayoutInflater wvi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 LinearLayout booking_row = (LinearLayout) wvi.inflate(R.layout.booking_table_row, null);
 
-                TextView tvdate = (TextView) booking_row.getChildAt(0);
-                TextView tvtime = (TextView) booking_row.getChildAt(1);
-                TextView tvname = (TextView) booking_row.getChildAt(2);
-                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(4);
+                LinearLayout datetime = (LinearLayout) booking_row.getChildAt(2);
+                TextView tvdate = (TextView) datetime.getChildAt(0);
+                TextView tvtime = (TextView) datetime.getChildAt(1);
+                TextView tvname = (TextView) booking_row.getChildAt(3);
+
+                final ImageButton meeting_button = (ImageButton) booking_row.getChildAt(0);
+                final ImageButton door_button = (ImageButton) booking_row.getChildAt(1);
 
                 tvdate.setText(booking.getString("date"));
                 tvtime.setText(booking.getString("start_time"));
@@ -489,13 +484,48 @@ public class ClassesFragment extends Fragment implements Observer {
                     meeting_button.setVisibility(View.INVISIBLE);
                 }
 
-                meeting_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        meeting_button.startAnimation(ClassesFragment.this.scale);
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(murl));
-                        startActivity(i);
+                String cdate = booking.getString("date");
+                String ctime = booking.getString("start_time");
+                Date classDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(cdate + " " + ctime);
+                Date nowDate = new Date();
+
+                int doorArmedBeforeSeconds = Integer.parseInt(booking.getString("doorArmedBeforeMins")) * 60;
+                int doorDisarmedAfterSeconds = Integer.parseInt(booking.getString("doorDisarmedAfterMins")) * 60;
+                int start = (int) (classDate.getTime() / 1000) - doorArmedBeforeSeconds;
+                int stop = (int) (classDate.getTime() / 1000) + doorDisarmedAfterSeconds;
+                int now = (int) (nowDate.getTime() / 1000);
+
+                Log.v("ayc-profile"," -- ");
+                Log.v("ayc-profile","class date:" + classDate.toString());
+                Log.v("ayc-profile","now date:" + nowDate.toString());
+                Log.v("ayc-profile","cdate: " + cdate);
+                Log.v("ayc-profile","ctime: " + ctime);
+                Log.v("ayc-profile","start: " + start);
+                Log.v("ayc-profile","stop: " + stop);
+                Log.v("ayc-profile","now: " + now);
+                Log.v("ayc-profile","doorArmedBeforeSeconds: " + doorArmedBeforeSeconds);
+                Log.v("ayc-profile","doorDisarmedAfterSeconds: " + doorDisarmedAfterSeconds);
+
+                if(now > start && now < stop) {
+                    door_button.setVisibility(View.VISIBLE);
+                } else {
+                    door_button.setVisibility(View.INVISIBLE);
+                }
+
+                meeting_button.setOnClickListener(v -> {
+                    meeting_button.startAnimation(ClassesFragment.this.scale);
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(murl));
+                    startActivity(i);
+                });
+
+                door_button.setOnClickListener(v -> {
+                    door_button.startAnimation(ClassesFragment.this.scale);
+                    try {
+                        ScraperManager.getInstance().open_door(booking.getString("class_id"));
+                    } catch(Exception e)
+                    {
+
                     }
                 });
 
