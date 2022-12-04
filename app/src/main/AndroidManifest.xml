@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ie.ayc">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -24,7 +23,7 @@
             android:name=".AycNavigationActivity"
             android:label="@string/title_activity_ayc_navigation" />
         <activity android:name=".PurchaseActivity" />
-        <activity android:name=".Login">
+        <activity android:name=".Login" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -103,7 +103,7 @@ public class ClassesFragment extends Fragment implements Observer {
         sm.attach(this);
         sm.object_notify(UpdateSource.classes);
 
-        AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "classes", null);
+        AycNavigationActivity.mFirebaseAnalytics.logEvent("classes", null);
 
         SwipeRefreshLayout swipeRefreshLayout = this.root.findViewById(R.id.refreshLayoutClasses);
 

@@ -27,6 +27,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <TextView
+                    android:id="@+id/buildversion"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="0dp"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:textSize="8pt"
+                    android:text="" />
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_marginTop="15dp"
@@ -70,8 +82,8 @@
                     android:text="Username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="30dp"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
                     android:textStyle="bold"
                     android:textColor="#000000"
                     android:fontFamily="@font/ubuntu_bold"

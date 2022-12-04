@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
+
 import ie.ayc.ui.ClassesFragment;
 
 public class BugReportActivity extends AppCompatActivity {
@@ -100,7 +102,11 @@ public class BugReportActivity extends AppCompatActivity {
                     Log.v("ayc", "too short");
                     return;
                 }
-                ScraperManager.getInstance().create_issue(tet.getText().toString(), det.getText().toString());
+                try {
+                    ScraperManager.getInstance().create_issue(tet.getText().toString(), det.getText().toString());
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(BugReportActivity.this);
                 builder.setMessage("Thank you, we have received your report")

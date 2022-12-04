@@ -1,6 +1,5 @@
 package ie.ayc;
 
-import android.os.AsyncTask;
 import android.util.Log;
 import org.json.JSONException;
 
@@ -10,7 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class SessionManager extends AsyncTask<String, String, String> {
+public class SessionManager extends AycAsyncTask<String, String, String> {
 
     public AsyncResponse delegate = null;
 

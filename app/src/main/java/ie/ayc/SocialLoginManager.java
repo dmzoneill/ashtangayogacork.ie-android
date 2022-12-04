@@ -10,14 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+//import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SocialLoginManager extends AppCompatActivity {
@@ -74,12 +73,12 @@ public class SocialLoginManager extends AppCompatActivity {
                 if (uri.toString().contains("ashtangayoga.ie/transaction-success")) {
                     Log.v("ayc-purchase", "update_user_credits");
 
-                    String cookies = AycCookieManager.getInstance().getCookieValue();
-                    String[] cookiesList = cookies.split(";");
-                    for(String cookie : cookiesList){
-                        CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
-                    }
-                    CookieSyncManager.getInstance().sync();
+//                    String cookies = AycCookieManager.getInstance().getCookieValue();
+//                    String[] cookiesList = cookies.split(";");
+//                    for(String cookie : cookiesList){
+//                        CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
+//                    }
+//                    CookieSyncManager.getInstance().sync();
                     view.loadUrl(uri.toString());
                 }
                 return false;
@@ -106,8 +105,8 @@ public class SocialLoginManager extends AppCompatActivity {
         wv.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 7.0; SM-G930V Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.125 Mobile Safari/537.36");
         wv.setWebViewClient(wvc);
         wv.getSettings().setJavaScriptEnabled(true);
-        wv.getSettings().setSaveFormData(true);
-        wv.getSettings().setAppCacheEnabled(true);
+        //wv.getSettings().setSaveFormData(true);
+        // wv.getSettings().setAppCacheEnabled(true);
         wv.addJavascriptInterface(new MyJavaScriptInterface(this), "HTMLOUT");
         wv.loadUrl(url);
     }

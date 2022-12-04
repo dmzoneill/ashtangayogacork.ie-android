@@ -67,7 +67,7 @@ public class PricesFragment extends Fragment implements Observer {
         sm.attach(this);
         sm.object_notify(UpdateSource.prices);
 
-        AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "prices", null);
+        AycNavigationActivity.mFirebaseAnalytics.logEvent("prices", null);
 
         return root;
     }

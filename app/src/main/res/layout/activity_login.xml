@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:exported="true"
     tools:context=".Login">
 
     <include layout="@layout/content_login" />

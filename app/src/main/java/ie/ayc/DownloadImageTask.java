@@ -2,20 +2,14 @@ package ie.ayc;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.Objects;
 
-public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+public class DownloadImageTask extends AycAsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
     static Bitmap image = null;
     String imgurl = "";

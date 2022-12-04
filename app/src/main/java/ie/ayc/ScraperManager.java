@@ -1,6 +1,5 @@
 package ie.ayc;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -10,12 +9,13 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-public class ScraperManager extends AsyncTask<String, String, String> implements AsyncResponse, Observable {
+public class ScraperManager extends AycAsyncTask<String, String, String> implements AsyncResponse, Observable {
 
     private static ArrayList<Observer> observers;
     private static ScraperManager instance;
@@ -211,11 +211,11 @@ public class ScraperManager extends AsyncTask<String, String, String> implements
         update_settings.execute("https://ashtangayoga.ie/json/?a=update_settings&sphone=" + phone + "&ssms=" + sms + "&smail=" + mail);
     }
 
-    public void create_issue(String title, String description) {
+    public void create_issue(String title, String description) throws UnsupportedEncodingException {
         Log.v("ayc-scraper-update", "profile settings: " + observers.size());
         ScraperManager update_settings = new ScraperManager();
         update_settings.delegate = this.this_async;
-        update_settings.execute("https://ashtangayoga.ie/json/?a=submit_issue&t=" + URLEncoder.encode(title) + "&d=" + URLEncoder.encode(description) + "&i=android");
+        update_settings.execute("https://ashtangayoga.ie/json/?a=submit_issue&t=" + URLEncoder.encode(title, "UTF-8") + "&d=" + URLEncoder.encode(description, "UTF-8") + "&i=android", "UTF-8");
     }
 
     @Override

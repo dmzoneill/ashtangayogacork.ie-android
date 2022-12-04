@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+//import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -52,8 +52,8 @@ public class PurchaseActivity extends AppCompatActivity {
 
         final WebView wv = findViewById(R.id.webview);
         wv.getSettings().setJavaScriptEnabled(true);
-        wv.getSettings().setSaveFormData(true);
-        wv.getSettings().setAppCacheEnabled(true);
+        //wv.getSettings().setSaveFormData(true);
+        // wv.getSettings().setAppCacheEnabled(true);
 
         class MyJavaScriptInterface
         {
@@ -90,12 +90,12 @@ public class PurchaseActivity extends AppCompatActivity {
                 if (uri.toString().contains("ashtangayoga.ie/transaction-success")) {
                     Log.v("ayc-purchase", "update_user_credits");
 
-                    String cookies = AycCookieManager.getInstance().getCookieValue();
-                    String[] cookiesList = cookies.split(";");
-                    for(String cookie : cookiesList){
-                        CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
-                    }
-                    CookieSyncManager.getInstance().sync();
+//                    String cookies = AycCookieManager.getInstance().getCookieValue();
+//                    String[] cookiesList = cookies.split(";");
+//                    for(String cookie : cookiesList){
+//                        CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
+//                    }
+//                    CookieSyncManager.getInstance().sync();
                     view.loadUrl(uri.toString());
                 }
                 return false;
@@ -107,7 +107,7 @@ public class PurchaseActivity extends AppCompatActivity {
             }
         };
 
-        CookieManager.getInstance().setAcceptCookie(true);
+        //CookieManager.getInstance().setAcceptCookie(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(wv, true);
         }

@@ -1,6 +1,5 @@
 package ie.ayc;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 
@@ -14,7 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
-public class LoginManager extends AsyncTask<String, String, String> {
+public class LoginManager extends AycAsyncTask<String, String, String> {
 
     public AsyncResponse delegate = null;
 

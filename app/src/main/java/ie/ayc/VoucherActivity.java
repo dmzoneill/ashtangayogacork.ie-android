@@ -11,7 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+//import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -28,8 +28,8 @@ public class VoucherActivity extends AppCompatActivity {
     private void downloadVoucher() {
         final WebView wv = this.findViewById(R.id.receiptwebview);
         wv.getSettings().setJavaScriptEnabled(true);
-        wv.getSettings().setSaveFormData(true);
-        wv.getSettings().setAppCacheEnabled(true);
+        //wv.getSettings().setSaveFormData(true);
+        // wv.getSettings().setAppCacheEnabled(true);
 
         WebViewClient wvc = new WebViewClient() {
             @SuppressWarnings("deprecation")
@@ -48,13 +48,13 @@ public class VoucherActivity extends AppCompatActivity {
 
             private boolean handleUri(WebView view, final Uri uri) {
                 Log.v("ayc-voucher", uri.toString());
-                String cookies = AycCookieManager.getInstance().getCookieValue();
-                String[] cookiesList = cookies.split(";");
-                for (String cookie : cookiesList) {
-                    CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
-                }
-                Log.v("ayc-voucher", "set cookies");
-                CookieSyncManager.getInstance().sync();
+//                String cookies = AycCookieManager.getInstance().getCookieValue();
+//                String[] cookiesList = cookies.split(";");
+//                for (String cookie : cookiesList) {
+//                    CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
+//                }
+//                Log.v("ayc-voucher", "set cookies");
+//                CookieSyncManager.getInstance().sync();
                 if (uri.toString().contains("profile")) {
                     view.loadUrl(VoucherActivity.this.url);
                 } else {
@@ -77,7 +77,7 @@ public class VoucherActivity extends AppCompatActivity {
 
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
                 request.addRequestHeader("cookie", AycCookieManager.getInstance().getCookieValue());
-                request.allowScanningByMediaScanner();
+                //request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "ayc-voucher.png");
                 DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);

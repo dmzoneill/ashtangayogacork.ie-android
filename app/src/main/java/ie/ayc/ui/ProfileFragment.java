@@ -1,7 +1,6 @@
 package ie.ayc.ui;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -31,12 +30,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Iterator;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 import ie.ayc.AycCookieManager;
 import ie.ayc.AycNavigationActivity;
@@ -50,6 +51,7 @@ import ie.ayc.SettingsActivity;
 import ie.ayc.UpdateResponse;
 import ie.ayc.UpdateSource;
 import ie.ayc.VoucherActivity;
+import ie.ayc.BuildConfig;
 
 public class ProfileFragment extends Fragment implements Observer {
 
@@ -66,6 +68,8 @@ public class ProfileFragment extends Fragment implements Observer {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_profile, container, false);
         this.scale = AnimationUtils.loadAnimation(this.getContext(), R.anim.buttonclick);
+
+        String versionCode = String.valueOf(BuildConfig.VERSION_CODE);
 
         try {
             int[] headers = new int[4];
@@ -97,7 +101,10 @@ public class ProfileFragment extends Fragment implements Observer {
                 ProfileFragment.this.startActivity(myIntent);
             });
 
-            AycNavigationActivity.mFirebaseAnalytics.setCurrentScreen(this.getActivity(), "profile", null);
+            AycNavigationActivity.mFirebaseAnalytics.logEvent("profile", null);
+
+            TextView versionText = root.findViewById(R.id.buildversion);
+            versionText.setText("Build " + versionCode);
         }
         catch(Exception e) {
             Log.v("ayc-profile",e.getMessage());
