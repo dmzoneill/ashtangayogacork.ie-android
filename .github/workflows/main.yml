@@ -1,4 +1,4 @@
-name: ashtangayogacork.ie-android
+name: CICD
 
 on:
   push:
