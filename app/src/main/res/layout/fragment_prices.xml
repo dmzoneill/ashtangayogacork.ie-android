@@ -41,7 +41,7 @@
                 android:layout_marginBottom="10dp"/>
 
             <TextView
-                android:text="In our classes, the teacher will get to know you personaly and work with you to develop your own practice."
+                android:text="In our classes, the teacher will get to know you personally and work with you to develop your own practice."
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
@@ -67,11 +67,7 @@
                 android:textColor="#000000"
                 android:textSize="14sp"/>
 
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
+            <ImageView style="@style/GaneshDivider" />
 
             <TextView
                 android:id="@+id/gifts"
@@ -92,11 +88,7 @@
                 android:textColor="#000000"
                 android:textSize="14sp"/>
 
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
+            <ImageView style="@style/GaneshDivider" />
 
             <TextView
                 android:id="@+id/monthlies"
@@ -144,11 +136,7 @@
                 android:textColor="#000000"
                 android:layout_marginBottom="20dp"/>
 
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
+            <ImageView style="@style/GaneshDivider" />
 
             <TextView
                 android:id="@+id/specials"
@@ -178,11 +166,7 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
+            <ImageView style="@style/GaneshDivider" />
 
             <TextView
                 android:id="@+id/standard"
@@ -219,11 +203,7 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
+            <ImageView style="@style/GaneshDivider" />
 
         </LinearLayout>
     </ScrollView>

@@ -18,6 +18,42 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
+
+    <style name="GaneshDivider">
+        <item name="android:layout_width">69dp</item>
+        <item name="android:layout_height">75dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:src">@drawable/sticker_ganesh</item>
+    </style>
+
+    <style name="BookingTime">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:fontFamily">@font/ubuntu_regular</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+
+    <style name="RowIcon">
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="PriceLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:text">Password</item>
+    </style>
+
     <style name ="dataTable">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>

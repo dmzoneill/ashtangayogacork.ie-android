@@ -1,82 +1,32 @@
 package ie.ayc;
 
 import android.util.Log;
-import org.json.JSONException;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
-public class SessionManager extends AycAsyncTask<String, String, String> {
+/** Loads a session URL and returns the body. */
+public final class SessionManager extends CookieTask {
+  /** LOGGED_OUT. */
+  private static final String LOGGED_OUT = "{\"loggedin\":false}";
 
-    public AsyncResponse delegate = null;
+  /** Creates a session request. */
+  public SessionManager() {
+    // Delegate is attached by the caller.
+  }
 
-    @Override
-    protected void onPostExecute(String result) {
-        try {
-            delegate.processFinish(result);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+  @Override
+  protected String doInBackground(final String... params) {
+    final String urlString = params[0];
+    final AycCookieManager cookies = AycCookieManager.getInstance();
+    try {
+      final HttpURLConnection connection =
+          SiteHttp.open(urlString, "GET", true, true); // xxxxxxxxxx
+      connection.addRequestProperty("Cookie", cookies.getCookieValue());
+      connection.setRequestProperty("charset", "utf-8");
+      cookies.addCookies(connection.getHeaderFields().get("Set-Cookie"));
+      return SiteHttp.readBody(connection, "ayc-login");
+    } catch (Exception exception) {
+      Log.v("ayc-async", exception.getMessage());
     }
-
-    public SessionManager(){
-        //set context variables if required
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected String doInBackground(String... params) {
-        String urlString = params[0]; // URL to call
-
-        AycCookieManager ayccm = AycCookieManager.getInstance();
-
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            urlConnection.addRequestProperty("Cookie", ayccm.getCookieValue());
-
-            urlConnection.setDoOutput(true);
-            urlConnection.setInstanceFollowRedirects(true);
-            urlConnection.setUseCaches(true);
-            urlConnection.setConnectTimeout(4000);
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("charset", "utf-8");
-
-            ayccm.addCookies(urlConnection.getHeaderFields().get("Set-Cookie"));
-
-            int responseCode = urlConnection.getResponseCode();
-
-            InputStream inputStream;
-            Log.v("ayc-login", " response code: " + responseCode);
-            if (200 <= responseCode && responseCode <= 299) {
-                inputStream = urlConnection.getInputStream();
-            } else {
-                inputStream = urlConnection.getErrorStream();
-            }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder response = new StringBuilder();
-            String currentLine;
-
-            while ((currentLine = in.readLine()) != null) {
-                response.append(currentLine);
-            }
-
-            in.close();
-
-            return response.toString();
-        } catch (Exception e) {
-            Log.v("ayc-async",e.getMessage());
-        }
-
-        return "{\"loggedin\":false}";
-    }
+    return LOGGED_OUT;
+  }
 }

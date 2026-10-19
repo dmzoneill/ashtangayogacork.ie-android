@@ -1,37 +1,56 @@
 package ie.ayc;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-
 import java.util.concurrent.TimeUnit;
 
-public class ScraperManagerScheduler extends Worker {
-    private static PeriodicWorkRequest pwr;
+public final class ScraperManagerScheduler extends Worker {
+  /** How often the background refresh runs. */
+  private static final int REFRESH_MINUTES = 15;
 
-    public ScraperManagerScheduler(@NonNull Context context, @NonNull WorkerParameters params) {
-        super(context, params);
+  /** pwr. */
+  private static PeriodicWorkRequest pwr;
+
+  /**
+   * ScraperManagerScheduler.
+   *
+   * @param context value
+   * @param params value
+   */
+  public ScraperManagerScheduler(
+      @NonNull final Context context, @NonNull final WorkerParameters params) {
+    super(context, params);
+  }
+
+  @Override
+  public Result doWork() {
+    ScraperManager sm = ScraperManager.getInstance();
+    sm.fetchAll();
+    return Result.success();
+  }
+
+  /**
+   * scheduleTask.
+   *
+   * @param context value
+   */
+  public static void scheduleTask(final Context context) {
+    WorkManager mWorkManager = WorkManager.getInstance(context);
+
+    if (pwr != null) {
+      mWorkManager.cancelWorkById(pwr.getId());
     }
 
-    @Override
-    public Result doWork() {
-        ScraperManager sm = ScraperManager.getInstance();
-        sm.fetch_all();
-        return Result.success();
-    }
-
-    public static void schedule_task(Context context) {
-        WorkManager mWorkManager = WorkManager.getInstance(context);
-
-        if (pwr != null) {
-            mWorkManager.cancelWorkById(pwr.getId());
-        }
-
-        pwr = new PeriodicWorkRequest.Builder(ScraperManagerScheduler.class, 15, TimeUnit.MINUTES).build();
-        mWorkManager.enqueue(pwr);
-    }
+    pwr =
+        new PeriodicWorkRequest.Builder(
+                ScraperManagerScheduler.class,
+                REFRESH_MINUTES,
+                TimeUnit.MINUTES) // xxxxxxxxxxxxxxxx
+            .build();
+    mWorkManager.enqueue(pwr);
+  }
 }
