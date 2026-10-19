@@ -1,407 +1,487 @@
 package ie.ayc;
 
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-public class ScraperManager extends AycAsyncTask<String, String, String> implements AsyncResponse, Observable {
+/** Shared task type for the site scraper. */
+abstract class ScraperBase extends CookieTask
+    implements AsyncResponse, Observable { // xxxxxxxxxxxxx
+  /** ScraperBase. */
+  protected ScraperBase() {
+    // Allows the scraper subclass.
+  }
+}
 
-    private static ArrayList<Observer> observers;
-    private static ScraperManager instance;
-    private static JSONArray profile;
-    private static JSONArray classes;
-    private static JSONArray prices;
-    private static JSONArray bookings;
-    private static JSONArray transactions;
-    private static JSONArray used_credit;
-    private static JSONArray expiring_credit;
+/** Loads and caches the studio site data. */
+public final class ScraperManager extends ScraperBase {
 
-    static {
-        ScraperManager.observers = new ArrayList<>();
+  /** observers. */
+  private static ArrayList<Observer> observers;
+
+  /** instance. */
+  private static ScraperManager instance;
+
+  /** profile. */
+  private static JSONArray profile;
+
+  /** classes. */
+  private static JSONArray classes;
+
+  /** prices. */
+  private static JSONArray prices;
+
+  /** bookings. */
+  private static JSONArray bookings;
+
+  /** transactions. */
+  private static JSONArray transactions;
+
+  /** usedCredit. */
+  private static JSONArray usedCredit;
+
+  /** expiringCredit. */
+  private static JSONArray expiringCredit;
+
+  static {
+    ScraperManager.observers = new ArrayList<>();
+  }
+
+  /** callback. */
+  private final AsyncResponse callback;
+
+  private ScraperManager() {
+    // set context variables if required
+    this.callback = this;
+    setDelegate(this);
+  }
+
+  /**
+   * getInstance.
+   *
+   * @return result
+   */
+  public static ScraperManager getInstance() {
+    if (instance == null) {
+      instance = new ScraperManager();
     }
+    return instance;
+  }
 
-    private final AsyncResponse this_async;
-    public AsyncResponse delegate = null;
+  /**
+   * getProfile.
+   *
+   * @return result
+   */
+  public static JSONArray getProfile() {
+    return profile;
+  }
 
-    private ScraperManager() {
-        //set context variables if required
-        this.this_async = this;
-        this.delegate = this;
-    }
+  /**
+   * getBookings.
+   *
+   * @return result
+   */
+  public static JSONArray getBookings() {
+    return bookings;
+  }
 
-    public static ScraperManager getInstance() {
-        if (instance == null) {
-            instance = new ScraperManager();
-        }
-        return instance;
-    }
+  /**
+   * getExpiringCredit.
+   *
+   * @return result
+   */
+  public static JSONArray getExpiringCredit() {
+    return expiringCredit;
+  }
 
-    public static JSONArray getProfile() {
-        return profile;
-    }
+  /**
+   * getUsedCredit.
+   *
+   * @return result
+   */
+  public static JSONArray getUsedCredit() {
+    return usedCredit;
+  }
 
-    public static JSONArray getBookings() {
-        return bookings;
-    }
+  /**
+   * getTransactions.
+   *
+   * @return result
+   */
+  public static JSONArray getTransactions() {
+    return transactions;
+  }
 
-    public static JSONArray getExpiringCredit() {
-        return expiring_credit;
-    }
+  /**
+   * getPrices.
+   *
+   * @param filter value
+   * @return result
+   */
+  public static JSONArray getPrices(final int filter) {
+    JSONArray filtered = new JSONArray();
 
-    public static JSONArray getUsedCredit() {
-        return used_credit;
-    }
+    try {
+      Log.v("ayc-scraper", " total prices: " + prices.length());
 
-    public static JSONArray getTransactions() {
-        return transactions;
-    }
+      for (int y = 0; y < prices.length(); y++) {
+        JSONObject jo = prices.getJSONObject(y);
 
-    public static JSONArray getPrices(int filter) {
-        JSONArray filtered = new JSONArray();
-
-        try {
-            Log.v("ayc-scraper", " total prices: " + prices.length());
-
-            for (int y = 0; y < prices.length(); y++) {
-                JSONObject jo = prices.getJSONObject(y);
-
-                Log.v("ayc-scraper", " prices filter " + y + " / " + prices.length());
-                switch (filter) {
-                    case 0:
-                        Log.v("ayc-scraper", " prices filter monthly: " + jo.get("monthly").toString());
-                        if (jo.get("monthly").toString().compareToIgnoreCase("1") == 0) {
-                            filtered.put(jo);
-                        }
-                        break;
-                    case 1:
-                        Log.v("ayc-scraper", " prices filter special: " + jo.get("class_type_restriction").toString());
-                        if (jo.get("class_type_restriction").toString().compareToIgnoreCase("null") != 0) {
-                            filtered.put(jo);
-                        }
-                        break;
-                    case 2:
-                    default:
-                        Log.v("ayc-scraper", " prices filter standard: " + jo.get("monthly").toString());
-                        if (jo.get("monthly").toString().compareToIgnoreCase("0") == 0) {
-                            filtered.put(jo);
-                        }
-                        break;
-                }
+        Log.v("ayc-scraper", " prices filter " + y + " / " + prices.length());
+        switch (filter) {
+          case 0:
+            String part7 = " prices filter monthly: ";
+            Log.v("ayc-scraper", part7 + jo.get("monthly").toString());
+            if (jo.get("monthly").toString().compareToIgnoreCase("1") == 0) {
+              filtered.put(jo);
             }
-        } catch (Exception e) {
-            Log.v("ayc-scraper", " prices filter error: " + e.getMessage());
-        }
-
-        return filtered;
-    }
-
-
-    public static JSONArray getClasses(int filter_sticky) {
-        JSONArray filtered = new JSONArray();
-
-        try {
-            for (int y = 0; y < classes.length(); y++) {
-                JSONObject jo = classes.getJSONObject(y);
-
-                if (jo.get("sticky").toString().compareToIgnoreCase(String.valueOf(filter_sticky)) == 0) {
-                    filtered.put(jo);
-                }
+            break;
+          case 1:
+            Log.v(
+                "ayc-scraper",
+                " prices filter special: "
+                    + jo.get("class_type_restriction").toString()); // xxxxxxx
+            String restriction = jo.get("class_type_restriction").toString();
+            if (restriction.compareToIgnoreCase("null") != 0) { // xx
+              filtered.put(jo);
             }
-        } catch (Exception e) {
-            Log.v("ayc-scraper", " classes filter error: " + e.getStackTrace());
-        }
-
-        return filtered;
-    }
-
-    public static JSONObject getClassById(String id) {
-        try {
-            for (int y = 0; y < classes.length(); y++) {
-                JSONObject jo = classes.getJSONObject(y);
-
-                if (jo.get("class_id").toString().compareToIgnoreCase(id) == 0) {
-                    return jo;
-                }
+            break;
+          case 2:
+          default:
+            String part8 = " prices filter standard: ";
+            Log.v("ayc-scraper", part8 + jo.get("monthly").toString());
+            if (jo.get("monthly").toString().compareToIgnoreCase("0") == 0) {
+              filtered.put(jo);
             }
-        } catch (Exception e) {
-            Log.v("ayc-scraper-class", " get class by id : " + e.getStackTrace());
-            return null;
+            break;
         }
-
-        return null;
+      }
+    } catch (Exception e) {
+      Log.v("ayc-scraper", " prices filter error: " + e.getMessage());
     }
 
-    public void fetch_all() {
-        int i = 0;
-        String json_endpoint = "https://ashtangayoga.ie/json/?a=";
+    return filtered;
+  }
 
-        String[] urls = new String[7];
-        urls[i++] = "get_profile";
-        urls[i++] = "get_used_credit";
-        urls[i++] = "get_expiring_credit";
-        urls[i++] = "get_transactions";
-        urls[i++] = "get_bookings";
-        urls[i++] = "get_classes";
-        urls[i++] = "get_prices";
+  /**
+   * getClasses.
+   *
+   * @param filterSticky value
+   * @return result
+   */
+  public static JSONArray getClasses(final int filterSticky) {
+    JSONArray filtered = new JSONArray();
 
-        for (String action : urls) {
-            ScraperManager task = new ScraperManager();
-            task.delegate = this.this_async;
-            task.execute(json_endpoint + action);
+    try {
+      for (int y = 0; y < classes.length(); y++) {
+        JSONObject jo = classes.getJSONObject(y);
+
+        String sticky = jo.get("sticky").toString();
+        String wanted = String.valueOf(filterSticky);
+        if (sticky.compareToIgnoreCase(wanted) == 0) { // x
+          filtered.put(jo);
         }
+      }
+    } catch (Exception e) {
+      Log.v("ayc-scraper", " classes filter error: " + e.getStackTrace());
     }
 
-    public void begin_monthly() {
-        Log.v("ayc-scraper-update", "begin_monthly: " + observers.size());
-        ScraperManager begin_monthly = new ScraperManager();
-        begin_monthly.delegate = this.this_async;
-        begin_monthly.execute("https://ashtangayoga.ie/json/?a=begin_monthly");
-    }
+    return filtered;
+  }
 
-    public void open_door(String id) {
-        Log.v("ayc-scraper-update", "open door: " + observers.size());
-        ScraperManager open_door = new ScraperManager();
-        open_door.delegate = this.this_async;
-        open_door.execute("https://ashtangayoga.ie/json/?a=open_door&id=" + id);
-    }
+  /**
+   * getClassById.
+   *
+   * @param id value
+   * @return result
+   */
+  public static JSONObject getClassById(final String id) {
+    try {
+      for (int y = 0; y < classes.length(); y++) {
+        JSONObject jo = classes.getJSONObject(y);
 
-    public void apply_redeem_code(String code) {
-        Log.v("ayc-scraper-update", "book_class_add all: " + observers.size());
-        ScraperManager apply_redeem_code = new ScraperManager();
-        apply_redeem_code.delegate = this.this_async;
-        apply_redeem_code.execute("https://ashtangayoga.ie/json/?a=redeem_code&code=" + code);
-    }
-
-    public void book_class_add(String class_id) {
-        Log.v("ayc-scraper-update", "book_class_add all: " + observers.size());
-        ScraperManager book_class = new ScraperManager();
-        book_class.delegate = this.this_async;
-        book_class.execute("https://ashtangayoga.ie/json/?a=add_booking&id=actionButton" + class_id);
-    }
-
-    public void book_class_remove(String class_id) {
-        Log.v("ayc-scraper-update", "book_class_remove all: " + observers.size());
-        ScraperManager remove_class = new ScraperManager();
-        remove_class.delegate = this.this_async;
-        remove_class.execute("https://ashtangayoga.ie/json/?a=cancel_booking&id=actionButton" + class_id);
-    }
-
-    public void get_voucher_url(String name, String transid) {
-        Log.v("ayc-scraper-update", "make voucher: " + observers.size());
-        ScraperManager get_voucher = new ScraperManager();
-        get_voucher.delegate = this.this_async;
-        get_voucher.execute("https://ashtangayoga.ie/json/?a=get_voucher&vid=" + transid + "&vname=" + name);
-    }
-
-    public void update_user_settings(String phone, String sms, String mail) {
-        Log.v("ayc-scraper-update", "profile settings: " + observers.size());
-        ScraperManager update_settings = new ScraperManager();
-        update_settings.delegate = this.this_async;
-        update_settings.execute("https://ashtangayoga.ie/json/?a=update_settings&sphone=" + phone + "&ssms=" + sms + "&smail=" + mail);
-    }
-
-    public void create_issue(String title, String description) throws UnsupportedEncodingException {
-        Log.v("ayc-scraper-update", "profile settings: " + observers.size());
-        ScraperManager update_settings = new ScraperManager();
-        update_settings.delegate = this.this_async;
-        update_settings.execute("https://ashtangayoga.ie/json/?a=submit_issue&t=" + URLEncoder.encode(title, "UTF-8") + "&d=" + URLEncoder.encode(description, "UTF-8") + "&i=android", "UTF-8");
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        try {
-            delegate.processFinish(result);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (jo.get("class_id").toString().compareToIgnoreCase(id) == 0) {
+          return jo;
         }
+      }
+    } catch (Exception e) {
+      Log.v("ayc-scraper-class", " get class by id : " + e.getStackTrace());
+      return null;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
+    return null;
+  }
+
+  /** fetchAll. */
+  public void fetchAll() {
+    String jsonEndpoint = "https://ashtangayoga.ie/json/?a=";
+
+    String[] urls = {
+      "get_profile",
+      "get_used_credit",
+      "get_expiring_credit",
+      "get_transactions",
+      "get_bookings",
+      "get_classes",
+      "get_prices"
+    };
+
+    for (String action : urls) {
+      ScraperManager task = new ScraperManager();
+      task.setDelegate(this.callback);
+      task.execute(jsonEndpoint + action);
     }
+  }
 
-    @Override
-    protected String doInBackground(String... params) {
-        String urlString = params[0]; // URL to call
+  /** beginMonthly. */
+  public void beginMonthly() {
+    Log.v("ayc-scraper-update", "begin_monthly: " + observers.size());
+    ScraperManager beginMonthlyTask = new ScraperManager();
+    beginMonthlyTask.setDelegate(this.callback);
+    beginMonthlyTask.execute("https://ashtangayoga.ie/json/?a=begin_monthly");
+  }
 
-        AycCookieManager ayccm = AycCookieManager.getInstance();
+  /**
+   * openDoor.
+   *
+   * @param id value
+   */
+  public void openDoor(final String id) {
+    Log.v("ayc-scraper-update", "open door: " + observers.size());
+    ScraperManager openDoorTask = new ScraperManager();
+    openDoorTask.setDelegate(this.callback);
+    openDoorTask.execute("https://ashtangayoga.ie/json/?a=open_door&id=" + id);
+  }
 
-        Log.v("ayc-scraper", "contacting: " + urlString);
+  /**
+   * applyRedeemCode.
+   *
+   * @param code value
+   */
+  public void applyRedeemCode(final String code) {
+    Log.v("ayc-scraper-update", "book_class_add all: " + observers.size());
+    ScraperManager redeemTask = new ScraperManager();
+    redeemTask.setDelegate(this.callback);
+    String part9 = "https://ashtangayoga.ie/json/?a=redeem_code&code=";
+    redeemTask.execute(part9 + code);
+  }
 
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+  /**
+   * bookClassAdd.
+   *
+   * @param classId value
+   */
+  public void bookClassAdd(final String classId) {
+    Log.v("ayc-scraper-update", "book_class_add all: " + observers.size());
+    ScraperManager bookTask = new ScraperManager();
+    bookTask.setDelegate(this.callback);
+    String str4 = "https://ashtangayoga.ie/json/?a=add_booking&id=actionButton";
+    bookTask.execute(str4 + classId);
+  }
 
-            urlConnection.setUseCaches(false);
-            urlConnection.setDoOutput(true);
-            urlConnection.setInstanceFollowRedirects(false);
-            urlConnection.setConnectTimeout(4000);
-            urlConnection.setRequestMethod("GET");
+  /**
+   * bookClassRemove.
+   *
+   * @param classId value
+   */
+  public void bookClassRemove(final String classId) {
+    Log.v("ayc-scraper-update", "book_class_remove all: " + observers.size());
+    ScraperManager removeTask = new ScraperManager();
+    removeTask.setDelegate(this.callback);
+    String cancelBase = "https://ashtangayoga.ie/json/?a=";
+    String cancelUrl = cancelBase + "cancel_booking&id=actionButton";
+    removeTask.execute(cancelUrl + classId);
+  }
 
-            urlConnection.addRequestProperty("Cookie", ayccm.getCookieValue());
+  /**
+   * getVoucherUrl.
+   *
+   * @param name value
+   * @param transactionId value
+   */
+  public void getVoucherUrl(final String name, final String transactionId) {
+    Log.v("ayc-scraper-update", "make voucher: " + observers.size());
+    ScraperManager voucherTask = new ScraperManager();
+    voucherTask.setDelegate(this.callback);
+    voucherTask.execute(
+        "https://ashtangayoga.ie/json/?a=get_voucher&vid="
+            + transactionId
+            + "&vname="
+            + name); // xx
+  }
 
-            urlConnection.setRequestProperty("Host", "ashtangayoga.ie");
-            urlConnection.setRequestProperty("User-Agent", "ayc-android/1.0");
-            urlConnection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            urlConnection.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-            urlConnection.setRequestProperty("Connection", "keep-alive");
-            urlConnection.addRequestProperty("REFERER", "https://ashtangayoga.ie/wp-login.php");
-            urlConnection.setRequestProperty("charset", "utf-8");
+  /**
+   * updateUserSettings.
+   *
+   * @param phone value
+   * @param sms value
+   * @param mailXXXXXXXXXX value
+   */
+  public void updateUserSettings(
+      final String phone, final String sms, final String mailXXXXXXXXXX) {
+    Log.v("ayc-scraper-update", "profile settings: " + observers.size());
+    ScraperManager settingsTask = new ScraperManager();
+    settingsTask.setDelegate(this.callback);
+    settingsTask.execute(
+        "https://ashtangayoga.ie/json/?a=update_settings&sphone="
+            + phone
+            + "&ssms="
+            + sms
+            + "&smail="
+            + mailXXXXXXXXXX);
+  }
 
-            ayccm.addCookies(urlConnection.getHeaderFields().get("Set-Cookie"));
+  /**
+   * createIssue.
+   *
+   * @param title value
+   * @param description value
+   */
+  public void createIssue(final String title, final String description)
+      throws UnsupportedEncodingException {
+    Log.v("ayc-scraper-update", "profile settings: " + observers.size());
+    ScraperManager settingsTask = new ScraperManager();
+    settingsTask.setDelegate(this.callback);
+    settingsTask.execute(
+        "https://ashtangayoga.ie/json/?a=submit_issue&t="
+            + URLEncoder.encode(title, "UTF-8")
+            + "&d="
+            + URLEncoder.encode(description, "UTF-8")
+            + "&i=android",
+        "UTF-8");
+  }
 
-            // handle error response code it occurs
-            int responseCode = urlConnection.getResponseCode();
-            InputStream inputStream;
-            Log.v("ayc-scraper", " response code: " + responseCode);
-            if (200 <= responseCode && responseCode <= 299) {
-                inputStream = urlConnection.getInputStream();
-            } else {
-                inputStream = urlConnection.getErrorStream();
-            }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder response = new StringBuilder();
-            String currentLine;
-
-            while ((currentLine = in.readLine()) != null) {
-                response.append(currentLine);
-            }
-            in.close();
-
-            String resp = response.toString();
-
-            int maxLogSize = 1000;
-            for (int i = 0; i <= resp.length() / maxLogSize; i++) {
-                int start = i * maxLogSize;
-                int end = (i + 1) * maxLogSize;
-                end = end > resp.length() ? resp.length() : end;
-                Log.v("ayc-scraper-resp", resp.substring(start, end));
-            }
-
-            return resp;
-        } catch (Exception e) {
-            Log.v("ayc-scraper", e.getMessage());
-        }
-
-        return "";
+  @Override
+  protected String doInBackground(final String... params) {
+    final String urlString = params[0];
+    final AycCookieManager cookies = AycCookieManager.getInstance();
+    Log.v("ayc-scraper", "contacting: " + urlString);
+    try {
+      final java.net.HttpURLConnection connection =
+          SiteHttp.open(urlString, "GET", false, false); // x
+      connection.addRequestProperty("Cookie", cookies.getCookieValue());
+      SiteHttp.applyPageHeaders(connection, "ayc-android/1.0");
+      cookies.addCookies(connection.getHeaderFields().get("Set-Cookie"));
+      final String body = SiteHttp.readBody(connection, "ayc-scraper");
+      SiteHttp.logChunks("ayc-scraper-resp", body);
+      return body;
+    } catch (Exception exception) {
+      Log.v("ayc-scraper", exception.getMessage());
     }
+    return "";
+  }
 
-    @Override
-    public void processFinish(String output) {
-        Log.v("ayc-scraper", output);
-        try {
-            Log.v("ayc-scraper-resp",output
+  @Override
+  public void processFinish(final String output) {
+    Log.v("ayc-scraper", output);
+    try {
+      Log.v("ayc-scraper-resp", output);
 
-            );
-            JSONObject reader = new JSONObject(output);
+      JSONObject reader = new JSONObject(output);
 
-            Object obj = reader.get("result");
-            if (obj instanceof Boolean) {
-                this.object_notify(UpdateSource.logout);
-                return;
-            }
+      Object obj = reader.get("result");
+      if (obj instanceof Boolean) {
+        this.notifyObservers(UpdateSource.logout);
+        return;
+      }
 
-            UpdateResponse ur = new UpdateResponse();
-            ur.response = reader;
+      UpdateResponse ur = new UpdateResponse();
+      ur.response = reader;
 
-            switch (reader.getString("action")) {
-                case "get_bookings":
-                    bookings = reader.getJSONArray("result");
-                    this.object_notify(UpdateSource.classes);
-                    break;
-                case "get_prices":
-                    prices = reader.getJSONArray("result");
-                    this.object_notify(UpdateSource.prices);
-                    break;
-                case "get_classes":
-                    classes = reader.getJSONArray("result");
-                    this.object_notify(UpdateSource.classes);
-                    break;
-                case "get_profile":
-                    profile = reader.getJSONArray("result");
-                    this.object_notify(UpdateSource.profile);
-                    break;
-                case "get_transactions":
-                    transactions = reader.getJSONArray("result");
-                    this.object_notify(UpdateSource.profile);
-                    break;
-                case "get_used_credit":
-                    used_credit = reader.getJSONArray("result");
-                    this.object_notify(UpdateSource.profile);
-                    break;
-                case "get_expiring_credit":
-                    expiring_credit = reader.getJSONArray("result");
-                    this.object_notify(UpdateSource.profile);
-                    break;
-                case "open_door":
-                case "get_voucher":
-                    this.object_notify(UpdateSource.profile, ur);
-                    break;
-                case "add_booking":
-                case "cancel_booking":
-                case "redeem_code":
-                case "begin_monthly":
-                    this.object_notify(UpdateSource.classes, ur);
-                    return;
-                case "update_settings":
-                    String json_endpoint = "https://ashtangayoga.ie/json/?a=";
-                    ScraperManager task = new ScraperManager();
-                    task.delegate = this.this_async;
-                    task.execute(json_endpoint + "get_profile");
-                    return;
-            }
-        } catch (Exception e) {
-            Log.v("ayc-error", e.getMessage());
-        }
+      switch (reader.getString("action")) {
+        case "get_bookings":
+          bookings = reader.getJSONArray("result");
+          this.notifyObservers(UpdateSource.classes);
+          break;
+        case "get_prices":
+          prices = reader.getJSONArray("result");
+          this.notifyObservers(UpdateSource.prices);
+          break;
+        case "get_classes":
+          classes = reader.getJSONArray("result");
+          this.notifyObservers(UpdateSource.classes);
+          break;
+        case "get_profile":
+          profile = reader.getJSONArray("result");
+          this.notifyObservers(UpdateSource.profile);
+          break;
+        case "get_transactions":
+          transactions = reader.getJSONArray("result");
+          this.notifyObservers(UpdateSource.profile);
+          break;
+        case "get_used_credit":
+          usedCredit = reader.getJSONArray("result");
+          this.notifyObservers(UpdateSource.profile);
+          break;
+        case "get_expiring_credit":
+          expiringCredit = reader.getJSONArray("result");
+          this.notifyObservers(UpdateSource.profile);
+          break;
+        case "open_door":
+        case "get_voucher":
+          this.notifyObservers(UpdateSource.profile, ur);
+          break;
+        case "add_booking":
+        case "cancel_booking":
+        case "redeem_code":
+        case "begin_monthly":
+          this.notifyObservers(UpdateSource.classes, ur);
+          return;
+        case "update_settings":
+          String jsonEndpoint = "https://ashtangayoga.ie/json/?a=";
+          ScraperManager task = new ScraperManager();
+          task.setDelegate(this.callback);
+          task.execute(jsonEndpoint + "get_profile");
+          return;
+        default:
+          break;
+      }
+    } catch (Exception e) {
+      Log.v("ayc-error", e.getMessage());
     }
+  }
 
-    @Override
-    public void attach(Observer obj) {
-        if (ScraperManager.observers.contains(obj) == false) {
-            Log.v("ayc-scraper-attach", obj.toString());
-            ScraperManager.observers.add(obj);
-        }
+  @Override
+  public void attach(final Observer obj) {
+    if (!ScraperManager.observers.contains(obj)) {
+      Log.v("ayc-scraper-attach", obj.toString());
+      ScraperManager.observers.add(obj);
     }
+  }
 
-    @Override
-    public void detach(Observer obj) {
-        ScraperManager.observers.remove(obj);
-    }
+  @Override
+  public void detach(final Observer obj) {
+    ScraperManager.observers.remove(obj);
+  }
 
-    @Override
-    public void object_notify(UpdateSource updatesource, UpdateResponse ur) {
-        Log.v("ayc-scraper-update", "update all: " + observers.size());
-        for (Observer obj : ScraperManager.observers) {
-            Log.v("ayc-scraper-update", obj.toString());
-            obj.update(updatesource, ur);
-        }
+  @Override
+  public void notifyObservers(
+      final UpdateSource updateSource, final UpdateResponse urXXXXXXXXXXXX) {
+    Log.v("ayc-scraper-update", "update all: " + observers.size());
+    for (Observer obj : ScraperManager.observers) {
+      Log.v("ayc-scraper-update", obj.toString());
+      obj.update(updateSource, urXXXXXXXXXXXX);
     }
+  }
 
-    @Override
-    public void object_notify(UpdateSource updatesource) {
-        for (Observer obj : ScraperManager.observers) {
-            obj.update(updatesource);
-        }
+  @Override
+  public void notifyObservers(final UpdateSource updateSource) {
+    for (Observer obj : ScraperManager.observers) {
+      obj.update(updateSource);
     }
+  }
 
-    @Override
-    public void notify_all() {
-        for (UpdateSource source : UpdateSource.values()) {
-            if (source == UpdateSource.logout) continue;
-            this.object_notify(source);
-        }
+  @Override
+  public void notifyEverySource() {
+    for (UpdateSource source : UpdateSource.values()) {
+      if (source == UpdateSource.logout) {
+        continue;
+      }
+      this.notifyObservers(source);
     }
+  }
 }

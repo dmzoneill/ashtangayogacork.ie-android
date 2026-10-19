@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageButton
+        android:id="@+id/meeting_button"
+        style="@style/RowIcon"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/zoom" />
+
+    <ImageButton
+        android:id="@+id/door_button"
+        style="@style/RowIcon"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/door" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/BookingTime"
+            android:layout_marginBottom="0dp"
+            android:text="0" />
+
+        <TextView
+            style="@style/BookingTime"
+            android:layout_marginBottom="5dp"
+            android:text="1" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/ubuntu_regular"
+        android:maxLines="2"
+        android:text="2"
+        android:textColor="#000000" />
+
+</merge>

@@ -111,11 +111,7 @@
 
                 </TableLayout>
 
-                <ImageView
-                    android:layout_width="69dp"
-                    android:layout_height="75dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/sticker_ganesh" />
+                <ImageView style="@style/GaneshDivider" />
 
                 <TextView
                     android:id="@+id/expiring_credit"
@@ -141,11 +137,7 @@
 
                 </TableLayout>
 
-                <ImageView
-                    android:layout_width="69dp"
-                    android:layout_height="75dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/sticker_ganesh" />
+                <ImageView style="@style/GaneshDivider" />
 
                 <TextView
                     android:id="@+id/used_credit"
@@ -171,11 +163,7 @@
 
                 </TableLayout>
 
-                <ImageView
-                    android:layout_width="69dp"
-                    android:layout_height="75dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/sticker_ganesh" />
+                <ImageView style="@style/GaneshDivider" />
 
                 <TextView
                     android:id="@+id/transaction_history"
@@ -201,11 +189,7 @@
 
                 </TableLayout>
 
-                <ImageView
-                    android:layout_width="69dp"
-                    android:layout_height="75dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/sticker_ganesh" />
+                <ImageView style="@style/GaneshDivider" />
 
             </LinearLayout>
         </ScrollView>

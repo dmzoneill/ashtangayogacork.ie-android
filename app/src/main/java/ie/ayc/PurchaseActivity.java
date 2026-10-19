@@ -1,144 +1,93 @@
 package ie.ayc;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.webkit.CookieManager;
-//import android.webkit.CookieSyncManager;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.jediburrell.customfab.FloatingActionButton;
+/** Posts a class purchase and closes on the result. */
+public final class PurchaseActivity extends AppCompatActivity {
+  /** HOST. */
+  private static final String HOST = "ashtangayoga.ie/";
 
-public class PurchaseActivity extends AppCompatActivity {
+  /** SUCCESS_PATH. */
+  private static final String SUCCESS_PATH = HOST + "transaction-success";
 
-    public PurchaseActivity() { }
+  /** CANCELLED. */
+  private static final String CANCELLED =
+      "Sorry to see you cancelled your transaction, maybe next time";
 
-    @SuppressLint("JavascriptInterface")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_purchase);
+  /** FAILED_A. */
+  private static final String FAILED_A = "There was an error ";
 
-        try
-        {
-            this.getSupportActionBar().hide();
-        }
-        catch (NullPointerException e){}
+  /** FAILED. */
+  private static final String FAILED = FAILED_A + "with your transaction";
 
-        FloatingActionButton fab = findViewById(R.id.floating_action_button);
-        fab.setFabSize(FloatingActionButton.FAB_SIZE_MINI);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.v("ayc", "ayc fab");
-                Intent myIntent = new Intent(getApplicationContext(), BugReportActivity.class);
-                PurchaseActivity.this.startActivity(myIntent);
+  /** THANKS_A. */
+  private static final String THANKS_A = "Thank you for completing ";
+
+  /** THANK_YOU. */
+  private static final String THANK_YOU = THANKS_A + "your transaction";
+
+  /** Required by older layout inflation paths. */
+  public PurchaseActivity() {
+    // No extra setup.
+  }
+
+  @SuppressLint("JavascriptInterface")
+  @Override
+  protected void onCreate(final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_purchase);
+    ActivityChrome.hideActionBar(this);
+    ActivityChrome.attachBugReportButton(this);
+
+    final String[] data = getIntent().getStringArrayExtra("endpoint");
+    final String url = data[0];
+    final String postData = data[1];
+    final WebView webView = findViewById(R.id.webview);
+    webView.getSettings().setJavaScriptEnabled(true);
+    webView.setWebViewClient(
+        new AycWebViewClient() {
+          @Override
+          protected boolean handleUri(final WebView view, final Uri uri) {
+            if (uri.toString().contains(SUCCESS_PATH)) {
+              Log.v("ayc-purchase", "update_user_credits");
+              view.loadUrl(uri.toString());
             }
+            return false;
+          }
+
+          @Override
+          public void onPageFinished(final WebView view, final String pageUrl) {
+            Log.v("ayc-purchase-wv-finish", "onPageFinished");
+            String script = "javascript:window.HTMLOUT.processHTML('<head>'";
+            script += "+document.getElementsByTagName('html')[0]";
+            script += ".innerHTML+'</head>');";
+            view.loadUrl(script);
+          }
         });
+    WebViews.acceptCookies(webView, false);
+    webView.addJavascriptInterface(
+        new HtmlOutBridge(this::processFinish), "HTMLOUT"); // xxxxxxxxxxx
+    Log.v("ayc-purchase", postData);
+    Log.v("ayc-purchase", url);
+    webView.postUrl(url, postData.getBytes());
+  }
 
-        String[] data = getIntent().getStringArrayExtra("endpoint");
-        String url = data[0];
-        String postData = data[1];
-
-        final WebView wv = findViewById(R.id.webview);
-        wv.getSettings().setJavaScriptEnabled(true);
-        //wv.getSettings().setSaveFormData(true);
-        // wv.getSettings().setAppCacheEnabled(true);
-
-        class MyJavaScriptInterface
-        {
-            private PurchaseActivity pa;
-
-            public MyJavaScriptInterface(PurchaseActivity pa)
-            {
-                this.pa = pa;
-            }
-
-            @JavascriptInterface
-            public void processHTML(String html) {
-                this.pa.processFinish(html);
-            }
-        }
-
-        WebViewClient wvc = new WebViewClient() {
-            @SuppressWarnings("deprecation")
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                final Uri uri = Uri.parse(url);
-                return handleUri(view, uri);
-            }
-
-            @TargetApi(Build.VERSION_CODES.N)
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                final Uri uri = request.getUrl();
-                return handleUri(view, uri);
-            }
-
-            private boolean handleUri(WebView view, final Uri uri) {
-                final String host = uri.getHost();
-                if (uri.toString().contains("ashtangayoga.ie/transaction-success")) {
-                    Log.v("ayc-purchase", "update_user_credits");
-
-//                    String cookies = AycCookieManager.getInstance().getCookieValue();
-//                    String[] cookiesList = cookies.split(";");
-//                    for(String cookie : cookiesList){
-//                        CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
-//                    }
-//                    CookieSyncManager.getInstance().sync();
-                    view.loadUrl(uri.toString());
-                }
-                return false;
-            }
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                Log.v("ayc-purchase-wv-finish", "onPageFinished");
-                view.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
-            }
-        };
-
-        //CookieManager.getInstance().setAcceptCookie(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(wv, true);
-        }
-
-        wv.setWebViewClient(wvc);
-        wv.addJavascriptInterface(new MyJavaScriptInterface(this), "HTMLOUT");
-        Log.v("ayc-purchase", postData);
-        Log.v("ayc-purchase", url);
-        wv.postUrl(url,postData.getBytes());
+  /**
+   * processFinish.
+   *
+   * @param output value
+   */
+  public void processFinish(final String output) {
+    if (output.contains(CANCELLED)
+        || output.contains(FAILED)
+        || output.contains(THANK_YOU)) { // xxx
+      finish();
     }
-
-    public void processFinish(String output) {
-        String[] failed = new String[2];
-        failed[0] = "Sorry to see you cancelled your transaction, maybe next time";
-        failed[1] = "There was an error with your transaction";
-
-        String[] success = new String[2];
-        success[0] = "Thank you for completing your transaction";
-
-        for (String str: failed) {
-            if(output.contains(str)){
-                this.finish();
-            }
-        }
-
-        for (String str: success) {
-            if(output.contains(str)){
-                this.finish();
-            }
-        }
-
-        Log.v("ayc-purchase-wv-finish", output);
-    }
+    Log.v("ayc-purchase-wv-finish", output);
+  }
 }

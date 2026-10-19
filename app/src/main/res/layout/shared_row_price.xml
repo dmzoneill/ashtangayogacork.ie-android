@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pricerow"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView style="@style/PriceLabel" />
+
+            <TextView style="@style/PriceLabel" />
+
+            <TextView style="@style/PriceLabel" />
+
+        </LinearLayout>
+
+        <TextView style="@style/PriceLabel" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_button"
+            android:text="Register"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+</TableRow>

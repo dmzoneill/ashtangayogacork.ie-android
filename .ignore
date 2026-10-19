@@ -1,0 +1,5 @@
+# Generated Android Studio / IntelliJ project files.
+.idea/
+
+# Vector icon artwork. These XML files are image assets, not application logic.
+app/src/main/res/drawable-anydpi/

@@ -1,117 +1,122 @@
 package ie.ayc;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.CookieManager;
-//import android.webkit.CookieSyncManager;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
+import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocialLoginManager extends AppCompatActivity {
+/** Completes a social login and stores cookies. */
+public final class SocialLoginManager extends AppCompatActivity {
+  /** HOST. */
+  private static final String HOST = "ashtangayoga.ie/";
 
-    @SuppressLint("JavascriptInterface")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_social_login_manager);
+  /** SUCCESS_PATH. */
+  private static final String SUCCESS_PATH = HOST + "transaction-success";
 
-        Intent intent = getIntent();
+  /** HOME. */
+  private static final String HOME = "https://ashtangayoga.ie/";
 
-        String url;
+  /** LOGIN_PAGE. */
+  private static final String LOGIN_PAGE = "wp-login.php";
 
-        if( intent.getStringExtra("type").compareTo("fb") == 0) {
-            url = "https://ashtangayoga.ie/wp-login.php?loginSocial=facebook&redirect=https%3A%2F%2Fashtangayoga.ie%2F";
-        } else {
-            url = "https://ashtangayoga.ie/wp-login.php?loginSocial=google&redirect=https%3A%2F%2Fashtangayoga.ie%2F";
-        }
+  /** AGENT_A. */
+  private static final String AGENT_A = "Mozilla/5.0 (Linux; Android 7.0; ";
 
-        class MyJavaScriptInterface
-        {
-            private SocialLoginManager pa;
+  /** AGENT_B. */
+  private static final String AGENT_B = "SM-G930V Build/NRD90M) ";
 
-            public MyJavaScriptInterface(SocialLoginManager pa)
-            {
-                this.pa = pa;
+  /** AGENT_E. */
+  private static final String AGENT_E = "AppleWebKit/537.36 ";
+
+  /** AGENT_C. */
+  private static final String AGENT_C = "(KHTML, like Gecko) ";
+
+  /** AGENT_F. */
+  private static final String AGENT_F = "Chrome/59.0.3071.125 ";
+
+  /** AGENT_D. */
+  private static final String AGENT_D = "Mobile Safari/537.36";
+
+  /** MOBILE_AGENT. */
+  private static final String AGENT_LEFT = AGENT_A + AGENT_B + AGENT_E;
+
+  /** AGENT_RIGHT. */
+  private static final String AGENT_RIGHT = AGENT_C + AGENT_F + AGENT_D;
+
+  /** MOBILE_AGENT. */
+  private static final String MOBILE_AGENT = AGENT_LEFT + AGENT_RIGHT;
+
+  @SuppressLint("JavascriptInterface")
+  @Override
+  protected void onCreate(final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_social_login_manager);
+    final Intent intent = getIntent();
+    final String url = socialUrl(intent.getStringExtra("type"));
+    final WebView webView = findViewById(R.id.social_webview);
+    webView.getSettings().setUserAgentString(MOBILE_AGENT);
+    webView.setWebViewClient(
+        new AycWebViewClient() {
+          @Override
+          protected boolean handleUri(final WebView view, final Uri uri) {
+            Log.v("ayc-social", uri.toString());
+            if (uri.toString().contains(SUCCESS_PATH)) {
+              Log.v("ayc-purchase", "update_user_credits");
+              view.loadUrl(uri.toString());
             }
+            return false;
+          }
 
-            @JavascriptInterface
-            public void processHTML(String html) {
-                this.pa.processFinish(html);
+          @Override
+          public void onPageFinished(final WebView view, final String pageUrl) {
+            storeCookies(pageUrl);
+            if (pageUrl.contains(HOME) && !pageUrl.contains(LOGIN_PAGE)) {
+              finish();
             }
-        }
+          }
+        });
+    AycCookieManager.getInstance().clearCookies();
+    webView.getSettings().setJavaScriptEnabled(true);
+    webView.addJavascriptInterface(
+        new HtmlOutBridge(this::processFinish), "HTMLOUT"); // xxxxxxxxxxx
+    webView.loadUrl(url);
+  }
 
-        WebViewClient wvc = new WebViewClient() {
-            @SuppressWarnings("deprecation")
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                final Uri uri = Uri.parse(url);
-                return handleUri(view, uri);
-            }
-
-            @TargetApi(Build.VERSION_CODES.N)
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                final Uri uri = request.getUrl();
-                return handleUri(view, uri);
-            }
-
-            private boolean handleUri(WebView view, final Uri uri) {
-                final String host = uri.getHost();
-                Log.v("ayc-social", uri.toString());
-                if (uri.toString().contains("ashtangayoga.ie/transaction-success")) {
-                    Log.v("ayc-purchase", "update_user_credits");
-
-//                    String cookies = AycCookieManager.getInstance().getCookieValue();
-//                    String[] cookiesList = cookies.split(";");
-//                    for(String cookie : cookiesList){
-//                        CookieManager.getInstance().setCookie("https://ashtangayoga.ie", cookie);
-//                    }
-//                    CookieSyncManager.getInstance().sync();
-                    view.loadUrl(uri.toString());
-                }
-                return false;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                List<String> cookie_list = new ArrayList<>();
-                String[] key_vals = CookieManager.getInstance().getCookie(url).split(";");
-                for(String val: key_vals){
-                    cookie_list.add(val + ";");
-                    Log.v("ayc-social-login", "cookie: " + val);
-                }
-                AycCookieManager.getInstance().addCookies(cookie_list);
-                if(url.contains("https://ashtangayoga.ie/") && url.contains("wp-login.php") == false) {
-                    Log.v("ayc-social-login", "cookie: " + cookie_list.toArray().toString());
-                    SocialLoginManager.this.finish();
-                }
-            }
-        };
-
-        AycCookieManager.getInstance().clearCookies();
-        WebView wv = this.findViewById(R.id.social_webview);
-        wv.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 7.0; SM-G930V Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.125 Mobile Safari/537.36");
-        wv.setWebViewClient(wvc);
-        wv.getSettings().setJavaScriptEnabled(true);
-        //wv.getSettings().setSaveFormData(true);
-        // wv.getSettings().setAppCacheEnabled(true);
-        wv.addJavascriptInterface(new MyJavaScriptInterface(this), "HTMLOUT");
-        wv.loadUrl(url);
+  private static String socialUrl(final String type) {
+    if ("fb".compareTo(type) == 0) {
+      return "https://ashtangayoga.ie/wp-login.php?loginSocial=facebook"
+          + "&redirect=https%3A%2F%2Fashtangayoga.ie%2F";
     }
+    return "https://ashtangayoga.ie/wp-login.php?loginSocial=google"
+        + "&redirect=https%3A%2F%2Fashtangayoga.ie%2F";
+  }
 
-    public void processFinish(String output) {
-        Log.v("ayc-purchase-wv-finish", output);
+  private static void storeCookies(final String pageUrl) {
+    final List<String> cookies = new ArrayList<String>();
+    final String header = CookieManager.getInstance().getCookie(pageUrl);
+    final String[] pairs = header.split(";");
+    for (final String value : pairs) {
+      cookies.add(value + ";");
+      Log.v("ayc-social-login", "cookie: " + value);
     }
+    AycCookieManager.getInstance().addCookies(cookies);
+    if (pageUrl.contains(HOME) && !pageUrl.contains(LOGIN_PAGE)) {
+      Log.v("ayc-social-login", "cookie: " + cookies.toArray().toString());
+    }
+  }
+
+  /**
+   * processFinish.
+   *
+   * @param output value
+   */
+  public void processFinish(final String output) {
+    Log.v("ayc-purchase-wv-finish", output);
+  }
 }

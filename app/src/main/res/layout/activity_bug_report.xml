@@ -41,11 +41,7 @@
                 android:fontFamily="@font/ubuntu_regular"
                 android:layout_marginBottom="10dp"/>
 
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
+            <ImageView style="@style/GaneshDivider" />
 
             <TextView
                 android:text="Title"
@@ -99,11 +95,7 @@
                 android:textColor="#000000"
                 android:textSize="14sp"/>
 
-            <ImageView
-                android:layout_width="69dp"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:src="@drawable/sticker_ganesh" />
+            <ImageView style="@style/GaneshDivider" />
 
         </LinearLayout>
     </ScrollView>
