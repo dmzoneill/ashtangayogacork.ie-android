@@ -164,7 +164,7 @@ public final class AycCookieManager {
       outputStream.close();
       Log.v("ayc-cookie-save", "saved cookies to file");
     } catch (Exception e) {
-      Log.v("ayc-cookie-save", "failed ot save cookies to file");
+      Log.v("ayc-cookie-save", "failed to save cookies to file");
     }
   }
 

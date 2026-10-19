@@ -93,7 +93,7 @@ public final class PricesFragment extends Fragment implements Observer {
 
   private void addrows(final LinearLayout ll, final JSONArray prices) {
     try {
-      Log.v("ayc-prices-table", " lenght: " + prices.length());
+      Log.v("ayc-prices-table", " length: " + prices.length());
       for (int t = 0; t < prices.length(); t++) {
         Log.v("ayc-prices", " row: " + t);
         LayoutInflater vi = ie.ayc.FormColumns.inflater(getActivity());

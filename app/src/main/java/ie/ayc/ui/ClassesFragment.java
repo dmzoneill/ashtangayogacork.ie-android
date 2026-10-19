@@ -258,7 +258,7 @@ public final class ClassesFragment extends Fragment implements Observer {
     try {
       String lastweek = "";
       String lastdate = "";
-      Log.v("ayc-classes-table", " lenght: " + classes.length());
+      Log.v("ayc-classes-table", " length: " + classes.length());
 
       LayoutInflater vi = FormColumns.inflater(getActivity());
 
@@ -267,12 +267,12 @@ public final class ClassesFragment extends Fragment implements Observer {
 
         int res76 = R.layout.classes_table_row_time;
         TableRow classcontainer = (TableRow) vi.inflate(res76, null);
-        final JSONObject classs = classes.getJSONObject(t);
+        final JSONObject classRow = classes.getJSONObject(t);
 
-        String date = classs.get("date").toString();
+        String date = classRow.get("date").toString();
         Log.v("ayc-class-date", date);
 
-        String week = classs.get("week").toString();
+        String week = classRow.get("week").toString();
         Log.v("ayc-class-week", week);
 
         if (lastweek.compareTo(week) != 0) {
@@ -296,24 +296,24 @@ public final class ClassesFragment extends Fragment implements Observer {
         }
 
         TextView tvi = classcontainer.findViewById(R.id.class_instructor);
-        tvi.setText(classs.get("instructor").toString());
+        tvi.setText(classRow.get("instructor").toString());
 
         TextView tvct = classcontainer.findViewById(R.id.class_time);
         tvct.setGravity(Gravity.CENTER);
         tvct.setText(
-            classs.get("start_time").toString()
+            classRow.get("start_time").toString()
                 + "\n"
-                + classs.get("end_time").toString()); // xxxxx
+                + classRow.get("end_time").toString()); // xxxxx
 
         TextView tvcn = classcontainer.findViewById(R.id.class_name);
-        tvcn.setText(classs.get("name").toString());
+        tvcn.setText(classRow.get("name").toString());
 
         final Button btbk = classcontainer.findViewById(R.id.class_button);
-        btbk.setText(classs.get("button_text").toString());
-        btbk.setTag(classs.get("class_id").toString());
-        this.bookButtons.put(classs.get("class_id").toString(), btbk);
+        btbk.setText(classRow.get("button_text").toString());
+        btbk.setTag(classRow.get("class_id").toString());
+        this.bookButtons.put(classRow.get("class_id").toString(), btbk);
 
-        String action = classs.get("book_button_action").toString();
+        String action = classRow.get("book_button_action").toString();
         if (action.compareTo("ButtonCancel") != 0) { // xxxxxxxx
           btbk.setOnClickListener(
               v -> {
@@ -330,8 +330,11 @@ public final class ClassesFragment extends Fragment implements Observer {
               });
         }
 
-        if (classs.get("button_text").toString().compareTo("Cancelled") != 0
-            && Integer.parseInt(classs.get("max_attendees").toString()) == 0) {
+        String buttonText = classRow.get("button_text").toString();
+        String maxAttendees = classRow.get("max_attendees").toString();
+        boolean notCancelled = buttonText.compareTo("Cancelled") != 0;
+        boolean emptyClass = Integer.parseInt(maxAttendees) == 0;
+        if (notCancelled && emptyClass) {
           btbk.setVisibility(View.INVISIBLE);
         }
 

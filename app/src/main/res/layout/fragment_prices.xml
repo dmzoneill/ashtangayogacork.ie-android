@@ -41,7 +41,7 @@
                 android:layout_marginBottom="10dp"/>
 
             <TextView
-                android:text="In our classes, the teacher will get to know you personaly and work with you to develop your own practice."
+                android:text="In our classes, the teacher will get to know you personally and work with you to develop your own practice."
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
