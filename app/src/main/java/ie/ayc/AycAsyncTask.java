@@ -35,7 +35,7 @@ public abstract class AycAsyncTask<Params, Progress, Result> {
    *
    * @return executor
    */
-  public final ExecutorService getExecutor() {
+  public ExecutorService getExecutor() {
     return executor;
   }
 
@@ -44,7 +44,7 @@ public abstract class AycAsyncTask<Params, Progress, Result> {
    *
    * @return handler
    */
-  public final Handler getHandler() {
+  public Handler getHandler() {
     if (handler == null) {
       synchronized (AycAsyncTask.class) {
         handler = new Handler(Looper.getMainLooper());
@@ -87,12 +87,12 @@ public abstract class AycAsyncTask<Params, Progress, Result> {
    *
    * @param value progress
    */
-  public final void publishProgress(final Progress value) {
+  public void publishProgress(final Progress value) {
     getHandler().post(() -> onProgressUpdate(value));
   }
 
   /** Starts the task with no arguments. */
-  public final void execute() {
+  public void execute() {
     execute((String) null);
   }
 
@@ -101,7 +101,7 @@ public abstract class AycAsyncTask<Params, Progress, Result> {
    *
    * @param params inputs
    */
-  public final void execute(final String... params) {
+  public void execute(final String... params) {
     getHandler()
         .post(
             () -> {
@@ -115,7 +115,7 @@ public abstract class AycAsyncTask<Params, Progress, Result> {
   }
 
   /** Stops background work. */
-  public final void shutDown() {
+  public void shutDown() {
     if (executor != null) {
       executor.shutdownNow();
     }
@@ -126,7 +126,7 @@ public abstract class AycAsyncTask<Params, Progress, Result> {
    *
    * @return true when the executor is absent or stopped
    */
-  public final boolean isCancelled() {
+  public boolean isCancelled() {
     return executor == null || executor.isTerminated() || executor.isShutdown();
   }
 }
